@@ -21,7 +21,7 @@ public class CalendarController {
 
     @Autowired
     private GoogleCalendarService calendarService;
-    public static String accessToken = "ya29.a0Ad52N38YnFb3BAu7hhuu2U4qqvMqUssqGHJx58Gnh7hBNcRgni50-zJ5cU6RWntJHqiTe9C77S2yB-gG8ax36aYg7a4ALXXzPxu2YHUxHOxa3djh0empbOyAjn5aZg_Dg_bdyclptr6lbwnxcZMb6DwWmJcGF2bJnLpCaCgYKAeoSARMSFQHGX2Mi9ugVBZXO1K3mF50453k_bA0171";
+    public static String accessToken = "ya29.a0Ad52N38RM3EYZhHlaklCUeiXtsnvkx4xS736fGKVexKknhYoMYo6dW7ECrM_OxtMAaWvxuSZ8MMLNEYlcGZLXV3pMYVjWJMTq3Fc11sHgbgfHwFVsbTwpB4x-XRujFWf4W85PtBHSvTL3WmgvXY2wtZW1uDixByh_scaCgYKAXcSARMSFQHGX2Min9f4ruNTNMrMwYis_kHDjg0170";
 
     @GetMapping("/events")
     public List<EventDto> getEvents() throws IOException, GeneralSecurityException {
