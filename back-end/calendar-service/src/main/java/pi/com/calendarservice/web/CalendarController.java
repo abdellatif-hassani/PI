@@ -20,16 +20,12 @@ import java.util.List;
 public class CalendarController {
 
     private GoogleCalendarService calendarService;
-<<<<<<< HEAD
 
     public CalendarController(GoogleCalendarService calendarService) {
         this.calendarService = calendarService;
     }
 
     public static String accessToken = "ya29.a0Ad52N3-F5CpIpuS4Fg1FaRrawBtnCA5yLGxudG98Ejj0k_CKFxFH1LvQ-PgD9YzT1r9HMompa-mc4LuHqkBC2asGX2mg9YNTRxMg6eTCXVOL9hQTU0g2Z8v7xB1hksL-Tpzfwl18yIYwcVb-9j9lWfth-AMw9MyFJxBaBwaCgYKASsSARMSFQHGX2Mi6TFyCoyRtfvYRcnbNvvw2A0173";
-=======
-    public static String accessToken = "ya29.a0Ad52N38RM3EYZhHlaklCUeiXtsnvkx4xS736fGKVexKknhYoMYo6dW7ECrM_OxtMAaWvxuSZ8MMLNEYlcGZLXV3pMYVjWJMTq3Fc11sHgbgfHwFVsbTwpB4x-XRujFWf4W85PtBHSvTL3WmgvXY2wtZW1uDixByh_scaCgYKAXcSARMSFQHGX2Min9f4ruNTNMrMwYis_kHDjg0170";
->>>>>>> c1214e7ae96238317376f6da5962be43a44b5ccc
 
     @GetMapping("/events")
     public List<EventDto> getEvents() throws IOException, GeneralSecurityException {
