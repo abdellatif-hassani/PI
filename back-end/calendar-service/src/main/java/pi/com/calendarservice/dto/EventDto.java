@@ -9,7 +9,7 @@ public class EventDto {
     private String summary;
     private String location;
     private String description;
-    private DateTime startTime;
-    private DateTime endTime;
+    private String startTime;
+    private String endTime;
 
 }
