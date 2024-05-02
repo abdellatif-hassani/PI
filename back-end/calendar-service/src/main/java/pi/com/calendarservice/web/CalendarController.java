@@ -11,6 +11,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/events")
+//allow requests from any origin
+@CrossOrigin(origins = "*")
 public class CalendarController {
 
     private GoogleCalendarService calendarService;
