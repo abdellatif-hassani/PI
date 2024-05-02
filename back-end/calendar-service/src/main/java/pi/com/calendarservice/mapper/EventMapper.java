@@ -21,12 +21,9 @@ public class EventMapper {
     public static EventDto toEventDto(Event event) {
         EventDto eventDto = new EventDto();
         // Copy properties from Event to EventDto without BeanUtils
-        eventDto.setSummary(event.getSummary());
-        eventDto.setLocation(event.getLocation());
-        eventDto.setDescription(event.getDescription());
+        BeanUtils.copyProperties(event, eventDto);
         eventDto.setStartTime(convertMillisToReadableDate(event.getStart().getDateTime().getValue()));
         eventDto.setEndTime(convertMillisToReadableDate(event.getEnd().getDateTime().getValue()));
-        System.out.println(eventDto.getStartTime() + " " + eventDto.getEndTime());
         return eventDto;
     }
 

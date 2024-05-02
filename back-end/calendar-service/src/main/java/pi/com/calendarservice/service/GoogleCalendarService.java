@@ -75,13 +75,28 @@ public class GoogleCalendarService {
                 .setApplicationName(APPLICATION_NAME)
                 .build();
 
-        // Set up the parameters for the event search
+        // Define the query parameters for searching events
         Events events = service.events().list("primary")
-                .setQ(keyword)  // Set the keyword for searching in the event summary
+                .setQ(keyword)
                 .execute();
         return eventMapper.toEventDtos(events.getItems());
     }
 
 
+    public void deleteEvent(String accessToken, String keyword) {
+        try {
+            GoogleCredential credential = new GoogleCredential().setAccessToken(accessToken);
+
+            Calendar service = new Calendar.Builder(
+                    GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY, credential)
+                    .setApplicationName(APPLICATION_NAME)
+                    .build();
+            List<EventDto> eventDtos = searchEventsBySummary(accessToken, keyword);
+            String eventId = eventDtos.get(0).getId();
+            service.events().delete("primary", eventId).execute();
+        } catch (IOException | GeneralSecurityException e) {
+            e.printStackTrace();
+        }
+    }
 }
 

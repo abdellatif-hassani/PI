@@ -6,6 +6,7 @@ import lombok.*;
 // EventDto class to represent necessary information for an event
 @NoArgsConstructor @AllArgsConstructor @Getter @Setter @Builder
 public class EventDto {
+    private String id;
     private String summary;
     private String location;
     private String description;
