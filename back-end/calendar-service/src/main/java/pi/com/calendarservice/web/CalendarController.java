@@ -19,47 +19,49 @@ import java.util.List;
 @RestController
 public class CalendarController {
 
-    @Autowired
     private GoogleCalendarService calendarService;
-    public static String accessToken = "ya29.a0Ad52N38RM3EYZhHlaklCUeiXtsnvkx4xS736fGKVexKknhYoMYo6dW7ECrM_OxtMAaWvxuSZ8MMLNEYlcGZLXV3pMYVjWJMTq3Fc11sHgbgfHwFVsbTwpB4x-XRujFWf4W85PtBHSvTL3WmgvXY2wtZW1uDixByh_scaCgYKAXcSARMSFQHGX2Min9f4ruNTNMrMwYis_kHDjg0170";
+
+    public CalendarController(GoogleCalendarService calendarService) {
+        this.calendarService = calendarService;
+    }
+
+    public static String accessToken = "ya29.a0Ad52N3-F5CpIpuS4Fg1FaRrawBtnCA5yLGxudG98Ejj0k_CKFxFH1LvQ-PgD9YzT1r9HMompa-mc4LuHqkBC2asGX2mg9YNTRxMg6eTCXVOL9hQTU0g2Z8v7xB1hksL-Tpzfwl18yIYwcVb-9j9lWfth-AMw9MyFJxBaBwaCgYKASsSARMSFQHGX2Mi6TFyCoyRtfvYRcnbNvvw2A0173";
 
     @GetMapping("/events")
     public List<EventDto> getEvents() throws IOException, GeneralSecurityException {
         // Assuming you have the access token stored in the session or database
-        return EventMapper.toEventDtos(calendarService.getEvents(accessToken));
+        return calendarService.getEvents(accessToken);
     }
 
     @PostMapping("/events")
-    public Event addEvent(@RequestBody EventDto eventDto) throws IOException, GeneralSecurityException {
-        // Convert EventDto to Event
-        Event eventToAdd = EventMapper.toEvent(eventDto);
+    public EventDto addEvent(@RequestBody EventDto eventDto) throws IOException, GeneralSecurityException {
         // Assuming you have the access token stored in the session or database
-        return calendarService.addEvent(accessToken, eventToAdd);
+        return calendarService.addEvent(accessToken, eventDto);
     }
 
+    //Just for testing
     @GetMapping("/addEvent")
-    public Event addEvent() throws IOException, GeneralSecurityException {
+    public EventDto addEvent() throws IOException, GeneralSecurityException {
         // Example event to add
         Event eventToAdd = new Event();
-        eventToAdd.setSummary("ENSET Mohammedia");
+        eventToAdd.setSummary("Presentation about PI");
         eventToAdd.setLocation("Conference Room");
         eventToAdd.setDescription("Weekly team meeting to discuss progress and tasks.");
-        DateTime startDateTime = new DateTime("2024-05-01T09:00:00-07:00");
+        DateTime startDateTime = new DateTime("2024-04-30T09:00:00-07:00");
         EventDateTime start = new EventDateTime()
                 .setDateTime(startDateTime);
         eventToAdd.setStart(start);
-        DateTime endDateTime = new DateTime("2024-05-01T10:00:00-07:00");
+        DateTime endDateTime = new DateTime("2024-04-30T10:00:00-07:00");
         EventDateTime end = new EventDateTime()
                 .setDateTime(endDateTime);
-                //.setTimeZone("America/Los_Angeles")
         eventToAdd.setEnd(end);
         // Assuming you have the access token stored in the session or database
-        return calendarService.addEvent(accessToken, eventToAdd);
+        return calendarService.addEvent(accessToken, EventMapper.toEventDto(eventToAdd));
     }
 
     //updateEvent method to update an event in the calendar
     @GetMapping("/updateEvent")
-    public Event updateEvent() throws IOException, GeneralSecurityException {
+    public EventDto updateEvent() throws IOException, GeneralSecurityException {
         // Example event to update
         String eventId = "1bcs9a69le9b98lgd80l054kva"; //
         Event eventToUpdate = new Event();
@@ -76,11 +78,13 @@ public class CalendarController {
                 .setDateTime(endDateTime)
                 .setTimeZone("America/Los_Angeles");
         eventToUpdate.setEnd(end);
-        return calendarService.updateEvent(accessToken, eventId, eventToUpdate);
+        EventDto eventDto = EventMapper.toEventDto(eventToUpdate);
+        System.out.println("Event to update: " + eventDto.getStartTime());
+        return calendarService.updateEvent(accessToken, eventId, eventDto);
     }
 
     @GetMapping("/searchEvent")
-    public List<Event> searchEventsBySummary() throws IOException, GeneralSecurityException {
+    public List<EventDto> searchEventsBySummary() throws IOException, GeneralSecurityException {
         String keyword = "Conference about AI";
         return calendarService.searchEventsBySummary(accessToken, keyword);
     }
