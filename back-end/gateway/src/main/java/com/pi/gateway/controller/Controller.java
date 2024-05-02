@@ -14,8 +14,6 @@ import java.util.concurrent.Callable;
 @RequestMapping("")
 public class Controller {
 
-
-
     @GetMapping("/")
     public String get() {
         return "Hello World";
