@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/openai")
+@RequestMapping("")
 public class OpenAiController {
     private final OpenAiService openAiService;
 
@@ -21,5 +21,21 @@ public class OpenAiController {
     public PromptResponse getResponse(String message, String toking) throws JsonProcessingException {
          PromptResponse promptResponse =openAiService.getPrompt(message);
         return promptResponse;
+    }
+    @GetMapping("/test")
+    public String Response() {
+
+            return "promptResponse";
+    }
+    @GetMapping("")
+    public String hello() {
+
+        return "hello";
+    }
+
+    @GetMapping("/prompt_gpt/test")
+    public String helloo() {
+
+        return "hello";
     }
 }

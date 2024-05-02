@@ -13,10 +13,12 @@ import org.springframework.ai.openai.OpenAiChatClient;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
 
+@Component
 public class OpenAiServiceImpl implements OpenAiService {
 
     @Value("${spring.ai.openai.api-key}")

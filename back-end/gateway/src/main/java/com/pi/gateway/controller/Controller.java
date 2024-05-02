@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.concurrent.Callable;
 
-@RestController
+//@RestController
 @RequestMapping("")
 public class Controller {
 

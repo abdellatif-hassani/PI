@@ -23,10 +23,16 @@ public class SecurityConfig {
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-        http.authorizeExchange(exchanges -> exchanges
-                        .anyExchange().authenticated())
-                .oauth2ResourceServer(c -> c.opaqueToken(Customizer.withDefaults()));
+
+        http.authorizeExchange(
+                exchanges -> exchanges
+                        .anyExchange().permitAll()
+                )
+
+             .oauth2ResourceServer(c -> c.opaqueToken(Customizer.withDefaults()));
+
         http.csrf((csrf) -> csrf.disable());
+
         return http.build();
     }
 
