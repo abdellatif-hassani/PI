@@ -34,15 +34,13 @@ public class GoogleOpaqueTokenIntrospector implements ReactiveOpaqueTokenIntrosp
     }
 
     @Override
-
-    public Mono<OAuth2AuthenticatedPrincipal> introspect(String token)  {
+    public Mono<OAuth2AuthenticatedPrincipal> introspect(String token) {
         URI uri = UriComponentsBuilder.fromUriString(introspectUri)
                 .path("")
                 .queryParam("access_token", token)
                 .build()
                 .toUri();
-        System.out.println(uri);
-        System.out.println("************token"+token);
+       ;
         return userInfoClient.get()
                 .uri(uri)
                 .retrieve()

@@ -5,11 +5,12 @@ import lombok.*;
 
 // EventDto class to represent necessary information for an event
 @NoArgsConstructor @AllArgsConstructor @Getter @Setter @Builder
-public class CalenderApiDto {
+public class EventEntity {
+    private String id;
     private String summary;
     private String location;
     private String description;
-    private DateTime startTime;
-    private DateTime endTime;
+    private String startTime;
+    private String endTime;
 
 }
