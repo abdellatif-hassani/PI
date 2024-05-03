@@ -47,9 +47,9 @@ public class CalendarController {
     }
 
     @PutMapping("/update")
-    public EventDto updateEvent(@RequestParam String eventSummary, @RequestBody EventDto updatedEvent, HttpServletRequest request) throws IOException, GeneralSecurityException {
+    public EventDto updateEvent(@RequestParam String eventId, @RequestBody EventDto updatedEvent, HttpServletRequest request) throws IOException, GeneralSecurityException {
         String accessToken = (String) request.getAttribute("accessToken");
-        return calendarService.updateEvent(accessToken, eventSummary, updatedEvent);
+        return calendarService.updateEvent(accessToken, eventId, updatedEvent);
     }
 
 
