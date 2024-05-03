@@ -4,6 +4,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
@@ -13,6 +14,12 @@ import pi.com.calendarservice.mapper.EventMapper;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -105,5 +112,31 @@ public class GoogleCalendarService {
             e.printStackTrace();
         }
     }
+
+
+    public List<EventDto> searchEventsByDate(String accessToken, LocalDate date) throws IOException, GeneralSecurityException {
+        // Convert LocalDate to Date for API query
+        Date startDate = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date endDate = Date.from(date.atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant());
+
+        GoogleCredential credential = new GoogleCredential().setAccessToken(accessToken);
+
+        Calendar service = new Calendar.Builder(
+                GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY, credential)
+                .setApplicationName(APPLICATION_NAME)
+                .build();
+
+        // Define the query parameters for searching events
+        Events events = service.events().list("primary")
+                .setTimeMin(new DateTime(startDate))
+                .setTimeMax(new DateTime(endDate))
+                .execute();
+
+        return eventMapper.toEventDtos(events.getItems());
+    }
+
+
+
+
 }
 

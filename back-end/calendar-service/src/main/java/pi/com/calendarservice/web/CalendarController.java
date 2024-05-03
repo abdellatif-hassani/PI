@@ -1,12 +1,15 @@
 package pi.com.calendarservice.web;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import pi.com.calendarservice.dto.EventDto;
 import pi.com.calendarservice.service.GoogleCalendarService;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -50,6 +53,13 @@ public class CalendarController {
     public EventDto updateEvent(@RequestParam String eventSummary, @RequestBody EventDto updatedEvent, HttpServletRequest request) throws IOException, GeneralSecurityException {
         String accessToken = (String) request.getAttribute("accessToken");
         return calendarService.updateEvent(accessToken, eventSummary, updatedEvent);
+    }
+
+    @GetMapping("/searchByDate")
+    public List<EventDto> searchEventsByDate(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+                                             HttpServletRequest request) throws IOException, GeneralSecurityException {
+        String accessToken = (String) request.getAttribute("accessToken");
+        return calendarService.searchEventsByDate(accessToken, date);
     }
 
 
