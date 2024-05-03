@@ -4,6 +4,8 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.Message;
 import com.sun.xml.messaging.saaj.packaging.mime.MessagingException;
+import entiites.AccountCredential;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -39,9 +41,12 @@ public class Controller {
     private String authorizationUrl;
 
     @GetMapping("/send")
-    public Message send(@RequestBody EmailRequest emailRequest) throws GeneralSecurityException, IOException {
+    public Message send(@RequestBody EmailRequest emailRequest, HttpServletRequest httpServletRequest) throws GeneralSecurityException, IOException {
+        String token= (String) httpServletRequest.getHeader("accessToken");
+        token=token.substring(7);
+
         GmailServiceConfig gmailServiceConfig = applicationContext.getBean(GmailServiceConfig.class);
-        Gmail gmailService = gmailServiceConfig.gmailService(emailRequest.getAccountCredential());
+        Gmail gmailService = gmailServiceConfig.gmailService(new AccountCredential(token));
         emailService.setGmailService(gmailService);
         try {
                 return emailService.sendEmail(emailRequest.getFrom(), emailRequest.getSubject(), emailRequest.getMessage(),emailRequest.getAttachments());

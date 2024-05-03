@@ -14,33 +14,26 @@ import java.net.http.HttpHeaders;
 @RestController
 @RequestMapping("prompt_service")
 public class OpenAiController {
+
     private final OpenAiService openAiService;
 
-    public OpenAiController(ChatClient chatClient, OpenAiService openAiService) {
+    public OpenAiController( OpenAiService openAiService) {
         this.openAiService = openAiService;
     }
 
     @GetMapping("")
-    public PromptResponse getResponse(String message, String toking) throws JsonProcessingException {
+    public Object getResponse(String message, HttpServletRequest httpServletRequest) throws JsonProcessingException {
+         String token=httpServletRequest.getHeader("Authorization");
          PromptResponse promptResponse =openAiService.getPrompt(message);
-        return promptResponse;
-    }
-    @GetMapping("/test")
-    public String Response(HttpServletRequest httpServletRequest) {
 
-        System.out.println(httpServletRequest.getHeader("Authorization"));
-
-            return "promptResponse";
+        return openAiService.sendToTheCorrectService(promptResponse,token);
     }
+
     @GetMapping("")
     public String hello() {
 
         return "hello";
     }
 
-    @GetMapping("/prompt_gpt/test")
-    public String helloo() {
 
-        return "hello";
-    }
 }

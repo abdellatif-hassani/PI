@@ -14,7 +14,7 @@ public class EmailRequest {
     private String subject;
     private String message;
     private List<Attachment> attachments;
-    private AccountCredential accountCredential;
+
 
 
 }
