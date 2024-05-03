@@ -11,6 +11,6 @@ import java.util.List;
 
 @FeignClient("calendar-service")
 public interface GmailClient {
-    @PostMapping("/gmail/add")
+    @PostMapping("/send")
     List<EventEntity> sendEmail(@RequestHeader("Authorization") String authorizationHeader, @RequestBody GmailApiDto gmailApiDto);
 }
