@@ -32,13 +32,18 @@ public class EventMapper {
         Event event = new Event();
         BeanUtils.copyProperties(eventDto, event);
         // Convert start time string to DateTime
-        DateTime startDateTime = new DateTime(eventDto.getStartTime());
-        EventDateTime eventStart = new EventDateTime().setDateTime(startDateTime);
-        event.setStart(eventStart);
-        // Convert end time string to DateTime
-        DateTime endDateTime = new DateTime(eventDto.getEndTime());
-        EventDateTime eventEnd = new EventDateTime().setDateTime(endDateTime);
-        event.setEnd(eventEnd);
+        if (eventDto.getStartTime() == null || eventDto.getEndTime() == null) {
+            throw new IllegalArgumentException("Start time and end time must be provided");
+        }
+        else{
+            DateTime startDateTime = new DateTime(eventDto.getStartTime());
+            EventDateTime eventStart = new EventDateTime().setDateTime(startDateTime);
+            event.setStart(eventStart);
+            // Convert end time string to DateTime
+            DateTime endDateTime = new DateTime(eventDto.getEndTime());
+            EventDateTime eventEnd = new EventDateTime().setDateTime(endDateTime);
+            event.setEnd(eventEnd);
+        }
 
         return event;
     }

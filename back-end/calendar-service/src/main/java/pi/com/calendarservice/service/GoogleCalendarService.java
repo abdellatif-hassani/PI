@@ -54,15 +54,17 @@ public class GoogleCalendarService {
     }
 
     //updateEvent method to update an event in the calendar
-    public EventDto updateEvent(String accessToken, String eventId, EventDto updatedEvent) throws IOException, GeneralSecurityException {
+    public EventDto updateEvent(String accessToken, String eventSummary, EventDto updatedEvent) throws IOException, GeneralSecurityException {
         GoogleCredential credential = new GoogleCredential().setAccessToken(accessToken);
 
         Calendar service = new Calendar.Builder(
                 GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY, credential)
                 .setApplicationName(APPLICATION_NAME)
                 .build();
+        List<EventDto> eventDtos = searchEventsBySummary(accessToken, eventSummary);
+        EventDto eventDto = eventDtos.get(0);
         Event eventToUpdate = eventMapper.toEvent(updatedEvent);
-        Event event =  service.events().update("primary", eventId, eventToUpdate).execute();
+        Event event =  service.events().update("primary", eventDto.getId(), eventToUpdate).execute();
         return eventMapper.toEventDto(event);
     }
 
@@ -92,8 +94,13 @@ public class GoogleCalendarService {
                     .setApplicationName(APPLICATION_NAME)
                     .build();
             List<EventDto> eventDtos = searchEventsBySummary(accessToken, keyword);
-            String eventId = eventDtos.get(0).getId();
-            service.events().delete("primary", eventId).execute();
+            if(!eventDtos.isEmpty()) {
+                String eventId = eventDtos.get(0).getId();
+                service.events().delete("primary", eventId).execute();
+            }
+            else {
+                System.out.println("Event not found");
+            }
         } catch (IOException | GeneralSecurityException e) {
             e.printStackTrace();
         }

@@ -4,7 +4,7 @@ import com.google.api.client.util.DateTime;
 import lombok.*;
 
 // EventDto class to represent necessary information for an event
-@NoArgsConstructor @AllArgsConstructor @Getter @Setter @Builder
+@NoArgsConstructor @AllArgsConstructor @Getter @Setter @Builder @ToString
 public class EventDto {
     private String id;
     private String summary;
