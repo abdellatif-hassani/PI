@@ -6,6 +6,7 @@ import com.google.api.services.gmail.model.Message;
 import com.sun.xml.messaging.saaj.packaging.mime.MessagingException;
 import entiites.AccountCredential;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -29,7 +30,7 @@ public class Controller {
     private EmailService emailService;
 /*
 {
-    "from": "abderrazzak.nouari@gmail.com",
+    "to": "abderrazzak.nouari@gmail.com",
     "subject": "HII",
     "message": "This is a test email",
     "attachments":null
@@ -37,7 +38,7 @@ public class Controller {
  */
 
     @PostMapping("/send")
-    public Message send(@RequestBody EmailRequest emailRequest, HttpServletRequest httpServletRequest) throws GeneralSecurityException, IOException {
+    public Message send(@Valid @RequestBody  EmailRequest emailRequest, HttpServletRequest httpServletRequest) throws GeneralSecurityException, IOException {
         String token= (String) httpServletRequest.getHeader("Authorization");
         if(token==null)
             throw new CredentialNotFoundException("Token not found");
@@ -47,7 +48,7 @@ public class Controller {
         Gmail gmailService = gmailServiceConfig.gmailService(new AccountCredential(token));
         emailService.setGmailService(gmailService);
         try {
-                return emailService.sendEmail(emailRequest.getFrom(), emailRequest.getSubject(), emailRequest.getMessage(),emailRequest.getAttachments());
+                return emailService.sendEmail(emailRequest.getTo(), emailRequest.getSubject(), emailRequest.getMessage(),emailRequest.getAttachments());
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         } catch (javax.mail.MessagingException e) {
