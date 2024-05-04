@@ -76,6 +76,10 @@ public class EmailService {
         return new RedirectView(url);
     }
     private MimeMessage createEmailWithMultipleAttachments(String to, String subject, String bodyText, List<Attachment> attachments) throws MessagingException, IOException, javax.mail.MessagingException {
+
+        if(attachments==null || attachments.isEmpty()) {
+            return createEmail(to, subject, bodyText);
+        }
         Properties props = new Properties();
         Session session = Session.getDefaultInstance(props, null);
 
@@ -91,19 +95,19 @@ public class EmailService {
         Multipart multipart = new MimeMultipart();
         multipart.addBodyPart(mimeBodyPart);
 
-        for (Attachment attachment : attachments) {
-            MimeBodyPart attachmentBodyPart = new MimeBodyPart();
-            byte [] bytes = Base64.decodeBase64(attachment.getData());
-            ByteArrayDataSource mediaContent = new ByteArrayDataSource(bytes, attachment.getContentType());
+            for (Attachment attachment : attachments) {
+                MimeBodyPart attachmentBodyPart = new MimeBodyPart();
+                byte[] bytes = Base64.decodeBase64(attachment.getData());
+                ByteArrayDataSource mediaContent = new ByteArrayDataSource(bytes, attachment.getContentType());
 
-            attachmentBodyPart.setContent(attachment.getData(), attachment.getContentType());
+                attachmentBodyPart.setContent(attachment.getData(), attachment.getContentType());
 
-            attachmentBodyPart.setDataHandler(new DataHandler(mediaContent));
-            attachmentBodyPart.setFileName(attachment.getName());
-            multipart.addBodyPart(attachmentBodyPart);
-        }
+                attachmentBodyPart.setDataHandler(new DataHandler(mediaContent));
+                attachmentBodyPart.setFileName(attachment.getName());
+                multipart.addBodyPart(attachmentBodyPart);
+            }
 
-        email.setContent(multipart);
+            email.setContent(multipart);
 
         return email;
     }
