@@ -3,13 +3,16 @@ package com.example.promp_gpt.service.clients;
 
 import com.example.promp_gpt.entities.EventEntity;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 
-@FeignClient("calendar-service")
+
+@FeignClient(name = "calendar-service")
 public interface CalenderClient {
     @GetMapping("/events")
-    EventEntity getEvent(@RequestHeader("Authorization") String authorizationHeader);
+    List<EventEntity> getEvent(@RequestHeader("Authorization") String authorizationHeader);
     @PostMapping("/events/add")
         EventEntity setEvent(@RequestHeader("Authorization") String authorizationHeader, @RequestBody EventEntity event);
     @PutMapping ("/events/update")

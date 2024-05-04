@@ -10,6 +10,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 public interface OpenAiService {
    PromptResponse getPrompt(String prompt) throws JsonProcessingException;
    GmailApiDto sendToTheGemailService(GmailApiDto gmailApiDto, String methodeToUse, String token);
-    EventEntity sendToTheCalenderService(EventEntity eventEntity, String methodeToUse, String token);
+    Object sendToTheCalenderService(EventEntity eventEntity, String methodeToUse, String token);
     Object sendToTheCorrectService(PromptResponse promptResponse, String token);
 }

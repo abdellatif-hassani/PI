@@ -6,9 +6,8 @@ import lombok.*;
 import java.util.List;
 
 // EventDto class to represent necessary information for an event
-@NoArgsConstructor @AllArgsConstructor @Getter @Setter @Builder
+@NoArgsConstructor @AllArgsConstructor @Getter @Setter @Builder @ToString
 public class GmailApiDto {
-    private String from;
     private String to;
     private String subject;
     private String message;
