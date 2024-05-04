@@ -56,7 +56,6 @@ public class GoogleCalendarService {
                 GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY, credential)
                 .setApplicationName(APPLICATION_NAME)
                 .build();
-
         return eventMapper.toEventDto(service.events().insert("primary", eventToAdd).execute());
     }
 

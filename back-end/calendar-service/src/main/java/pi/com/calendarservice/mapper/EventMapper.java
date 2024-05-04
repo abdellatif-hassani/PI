@@ -44,7 +44,6 @@ public class EventMapper {
             EventDateTime eventEnd = new EventDateTime().setDateTime(endDateTime);
             event.setEnd(eventEnd);
         }
-
         return event;
     }
 
