@@ -28,8 +28,8 @@ public class OpenAiController {
         String token="ya29.a0AXooCgtQYjvNdrBQ0ompdQfY4BilWjyDtdIWAF9BJJpnErqv9nyrxIid_Y2ECWqR8-TXMff4ZrxybNoTK0uqBHjfXG_uyJeykuYPjcshc5Ca2q4KQdGPS2s8gDyMeIfsMreq8dM1j0SGVx8JAQCon4_NflYypDhXKNUaCgYKAScSARMSFQHGX2Mik97kQQ-Llb6c2Aho3RG7eg0170";
         PromptResponse promptResponse =openAiService.getPrompt(message);
         System.out.println("****************"+promptResponse);
-       return openAiService.sendToTheCorrectService(promptResponse,token);
-      //  return promptResponse;
+      // return openAiService.sendToTheCorrectService(promptResponse,token);
+       return promptResponse;
     }
 
     @GetMapping("/hellpo")

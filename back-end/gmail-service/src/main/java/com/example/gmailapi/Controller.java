@@ -9,10 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
 import entiites.EmailRequest;
@@ -22,6 +19,7 @@ import java.security.GeneralSecurityException;
 
 
 @RestController
+@RequestMapping("")
 public class Controller {
     @Autowired
     private ApplicationContext applicationContext;
@@ -40,9 +38,9 @@ public class Controller {
     @Value("${gmail.auth.url}")
     private String authorizationUrl;
 
-    @GetMapping("/send")
+    @PostMapping("/send")
     public Message send(@RequestBody EmailRequest emailRequest, HttpServletRequest httpServletRequest) throws GeneralSecurityException, IOException {
-        String token= (String) httpServletRequest.getHeader("accessToken");
+        String token= (String) httpServletRequest.getHeader("Authorization");
         token=token.substring(7);
 
         GmailServiceConfig gmailServiceConfig = applicationContext.getBean(GmailServiceConfig.class);
