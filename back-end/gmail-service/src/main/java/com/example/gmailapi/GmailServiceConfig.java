@@ -24,8 +24,6 @@ public class GmailServiceConfig {
     private static final String APPLICATION_NAME = "VirtualAssistant";
     private static final JsonFactory JSON_FACTORY = getDefaultInstance();
 
-    @Value("${gmail.credentials.path}")
-    private String credentialsFilePath; // Path to your credentials.json file
 
 
 
@@ -38,12 +36,6 @@ public class GmailServiceConfig {
 
     private Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT,AccountCredential accountCredential) throws IOException {
         // Load client secrets
-        InputStream in = GmailApiApplication.class.getResourceAsStream(credentialsFilePath);
-        if (in == null) {
-            throw new FileNotFoundException("Resource not found: " + credentialsFilePath);
-        }
-        GoogleClientSecrets clientSecrets =
-                GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 
         // Build flow and trigger user authorization request.
          Credential credential = new Credential( new BearerToken().authorizationHeaderAccessMethod()).setAccessToken(accountCredential.getAccessToken());

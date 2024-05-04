@@ -14,6 +14,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import entiites.EmailRequest;
 
+import javax.security.auth.login.CredentialNotFoundException;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
@@ -26,21 +27,20 @@ public class Controller {
 
     @Autowired
     private EmailService emailService;
-
-    @Value("${gmail.client.id}")
-    private String clientId;
-    @Value("${gmail.client.clientSecret}")
-    private String clientSecret;
-    @Value("${gmail.scopes}")
-    private String[] SCOPES;
-    @Value("${gmail.redirect.path}")
-    private String redirectPath;
-    @Value("${gmail.auth.url}")
-    private String authorizationUrl;
+/*
+{
+    "from": "abderrazzak.nouari@gmail.com",
+    "subject": "HII",
+    "message": "This is a test email",
+    "attachments":null
+}
+ */
 
     @PostMapping("/send")
     public Message send(@RequestBody EmailRequest emailRequest, HttpServletRequest httpServletRequest) throws GeneralSecurityException, IOException {
         String token= (String) httpServletRequest.getHeader("Authorization");
+        if(token==null)
+            throw new CredentialNotFoundException("Token not found");
         token=token.substring(7);
 
         GmailServiceConfig gmailServiceConfig = applicationContext.getBean(GmailServiceConfig.class);
@@ -54,17 +54,6 @@ public class Controller {
             throw new RuntimeException(e);
         }
     }
-      @GetMapping("/oauth2callback")
-    public String oauthCallback(@RequestParam(value = "code", required = false) String code) throws IOException {
-        GoogleTokenResponse tokenResponse = emailService.getToken(code,clientId,clientSecret,redirectPath);
-        return tokenResponse.toString();
-    }
-    @GetMapping("/authorize")
-    public RedirectView authorize() {
-            try {
-                return emailService.authorize(authorizationUrl,clientId,redirectPath,SCOPES);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-    }
+
+
 }
