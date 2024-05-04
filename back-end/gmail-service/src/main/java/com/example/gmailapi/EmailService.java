@@ -112,17 +112,7 @@ public class EmailService {
         return email;
     }
 
-    public GoogleTokenResponse getToken(String code,String clientId,String clientSecret,String redirectPath) throws IOException {
-        return new GoogleAuthorizationCodeTokenRequest(
-                new NetHttpTransport(),
-                getDefaultInstance(),
-                "https://oauth2.googleapis.com/token",
-                clientId,
-                clientSecret,
-                code,
-                redirectPath)
-                .execute();
-    }
+
 
 
 }
