@@ -49,6 +49,7 @@ public class CalendarController {
         calendarService.deleteEvent(accessToken, eventSummary);
     }
 
+    //updateEvent method to update an event in the calendar
     @PutMapping("/update")
     public EventDto updateEvent(@RequestParam String eventSummary, @RequestBody EventDto updatedEvent, HttpServletRequest request) throws IOException, GeneralSecurityException {
         String accessToken = (String) request.getAttribute("accessToken");
