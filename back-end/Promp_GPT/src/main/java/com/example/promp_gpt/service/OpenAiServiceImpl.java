@@ -40,7 +40,6 @@ public class OpenAiServiceImpl implements OpenAiService {
         this.gmailClient = gmailClient;
 
     }
-
     @Override
     public PromptResponse getPrompt(String userText) throws JsonProcessingException {
         var openAiApi = new OpenAiApi(apiKey);
@@ -107,12 +106,12 @@ public class OpenAiServiceImpl implements OpenAiService {
 
     @Override
     public Object sendToTheCorrectService(PromptResponse promptResponse,String token) {
-        System.out.println("hello1"+promptResponse.getTypeAnswer()+promptResponse.getTypeAnswer().equals("calendar"));
+
         if (promptResponse.getTypeAnswer().equals("email")) {
             GmailApiDto gmailApiDto = promptResponse.getAnswerRelatedToGmail();
             return sendToTheGemailService(gmailApiDto,promptResponse.getMethodToUse(),token);
         } else if (promptResponse.getTypeAnswer().equals("calendar")) {
-            System.out.println("hello2");
+
             System.out.println(promptResponse.getAnswerRelatedToCalendar());
             EventEntity eventEntity = promptResponse.getAnswerRelatedToCalendar();
 
@@ -126,10 +125,7 @@ public class OpenAiServiceImpl implements OpenAiService {
     public GmailApiDto sendToTheGemailService(GmailApiDto gmailApiDto,String methodeToUse,String token) {
             if (methodeToUse.equals("send")) {
                 gmailClient.sendEmail("Bearer " + token, gmailApiDto);
-            } else if (methodeToUse.equals("draft")) {
-
             }
-            gmailClient.sendEmail("Bearer " + token, gmailApiDto);
             return gmailApiDto;
     }
     @Override

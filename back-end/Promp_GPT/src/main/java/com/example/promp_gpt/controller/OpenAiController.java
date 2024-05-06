@@ -25,18 +25,14 @@ public class OpenAiController {
     @GetMapping("")
     public Object getResponse(String message, HttpServletRequest httpServletRequest) throws JsonProcessingException {
        //  String token=httpServletRequest.getHeader("Authorization");
-        String token="ya29.a0AXooCgtQYjvNdrBQ0ompdQfY4BilWjyDtdIWAF9BJJpnErqv9nyrxIid_Y2ECWqR8-TXMff4ZrxybNoTK0uqBHjfXG_uyJeykuYPjcshc5Ca2q4KQdGPS2s8gDyMeIfsMreq8dM1j0SGVx8JAQCon4_NflYypDhXKNUaCgYKAScSARMSFQHGX2Mik97kQQ-Llb6c2Aho3RG7eg0170";
+        String token="ya29.a0AXooCgugicUK128Manxp0DuUXeCOuCe1dzvAXaMJdFZGAOJyo9CgZNjMO3jxSu_GC28uWnFb6gn-dQQ8aAgHFff_Q3bDDNYS2U6C8FXbqmyZjxzjwlM84EgsacU2tZ9llkM0fXVpWRmWPDbKJshZPAnm94TpHOLV9PsaCgYKAdQSARMSFQHGX2MiqgA2Ehd99Rfvio80cZcWgw0170";
         PromptResponse promptResponse =openAiService.getPrompt(message);
         System.out.println("****************"+promptResponse);
-      // return openAiService.sendToTheCorrectService(promptResponse,token);
-       return promptResponse;
+       return openAiService.sendToTheCorrectService(promptResponse,token);
+      // return promptResponse;
     }
 
-    @GetMapping("/hellpo")
-    public String hello() {
 
-        return "hello";
-    }
 
 
 }
