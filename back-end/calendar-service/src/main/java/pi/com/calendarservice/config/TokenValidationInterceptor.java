@@ -25,4 +25,3 @@ public class TokenValidationInterceptor implements HandlerInterceptor {
     }
 
 }
-

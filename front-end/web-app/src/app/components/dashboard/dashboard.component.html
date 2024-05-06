@@ -1,0 +1,30 @@
+<!-- dashboard.component.html -->
+<div class="dashboard-container">
+    <!-- Sidebar -->
+    <mat-sidenav mode="side" opened class="sidebar">
+      <mat-toolbar>
+        <img src="./../../assets/logo.png" alt="Assistant Logo" class="logo">
+        <span>My Assistant</span>
+      </mat-toolbar>
+      <mat-nav-list>
+        <a mat-list-item routerLink="/dashboard/messages" routerLinkActive="active-link">
+          <mat-icon matListIcon>chat</mat-icon>
+          <span matLine>Chat</span>
+        </a>
+        <a mat-list-item routerLink="/dashboard/profile" routerLinkActive="active-link">
+          <mat-icon matListIcon>person</mat-icon>
+          <span matLine>Profile</span>
+        </a>
+        <a mat-list-item (click)="logOut()">
+          <mat-icon matListIcon>logout</mat-icon>
+          <span matLine>Logout</span>
+        </a>
+      </mat-nav-list>
+    </mat-sidenav>
+  
+    <!-- Content -->
+    <div class="dashboard-content">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+  

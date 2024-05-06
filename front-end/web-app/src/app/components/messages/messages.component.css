@@ -1,0 +1,64 @@
+
+.profile-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Align items vertically with space between */
+    height: 100%; /* Make card take up full height */
+  }
+  
+  .profile-card mat-card-header {
+    
+    margin-bottom: 1em;
+  }
+
+  .chat-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1; /* Grow to take up remaining space */
+  }
+  
+  .chat-input {
+    display: flex;
+    flex-direction: column;
+    flex: 1; 
+  }
+
+  .chat-input textarea {
+    flex: 1; 
+    resize: none; 
+    padding: 10px; 
+    border: 1px solid #248e8a; 
+    border-radius: 5px; 
+      
+  }
+  
+  .send-btn {
+    align-self: center; 
+  }
+  
+
+.user-prompt {
+    background-color: #e6f2ff; /* Light blue for user prompt */
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.assistant-response {
+    background-color: #f0f0f0; /* Light grey for assistant response */
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.messages{
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.down-btn{
+  position: fixed;
+  right: 40px;
+  z-index: 1000;
+}
+

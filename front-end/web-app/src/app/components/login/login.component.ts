@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { AuthGoogleService } from '../services/auth-google.service';
+import { AuthGoogleService } from '../../services/auth-google.service';
 
 
 @Component({
