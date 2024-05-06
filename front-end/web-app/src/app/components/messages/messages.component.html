@@ -1,0 +1,27 @@
+<mat-card class="profile-card">
+    <mat-card-header>
+        <mat-card-title>Assistant MNH.1.0</mat-card-title>
+        <mat-card-subtitle>Send your request</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+        <div class="messages">
+            <div *ngFor="let requestResponse of requestsAndResponses">
+              <p [ngClass]="{'user-prompt': requestResponse.isUserPrompt, 'assistant-response': !requestResponse.isUserPrompt}">
+                <strong>{{ requestResponse.isUserPrompt ? user?.name : 'Assistant' }}:</strong> {{ requestResponse.prompt }}
+              </p>
+              <p [ngClass]="{'assistant-response': requestResponse.isUserPrompt, 'user-prompt': !requestResponse.isUserPrompt}">
+                <strong>{{ requestResponse.isUserPrompt ? 'Assistant' : user?.name }}:</strong> {{ requestResponse.response }}
+              </p>
+            </div>
+        </div>
+        <div class="chat-content">
+            <mat-form-field class="chat-input">
+                <textarea matInput placeholder="Type a message" [(ngModel)]="prompt"></textarea>
+            </mat-form-field>
+            <button mat-raised-button color="primary" 
+            (click)="sendRequest()" class="send-btn">Send</button>
+         </div>
+    </mat-card-content>  
+</mat-card>
+  
+  

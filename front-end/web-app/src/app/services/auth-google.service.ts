@@ -28,11 +28,11 @@ export class AuthGoogleService {
     this.oAuthService.configure(authConfig);
     this.oAuthService.setupAutomaticSilentRefresh();
     this.oAuthService.loadDiscoveryDocumentAndTryLogin().then(() => {
-      console.log('Logged in:', this.oAuthService.hasValidAccessToken());
-      console.log('Access Token:', this.oAuthService.getAccessToken());
       if (this.oAuthService.hasValidAccessToken()) {
         this.storeToken(this.oAuthService.getAccessToken());
       }
+      console.log('Logged in:', this.oAuthService.hasValidAccessToken());
+      console.log('Access Token:', this.oAuthService.getAccessToken());
     });
   }
 

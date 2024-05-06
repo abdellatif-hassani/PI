@@ -7,7 +7,7 @@ import { catchError } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class ApiService {
-  private apiUrl = 'http://localhost:9000'; 
+  private apiUrl = 'http://localhost:9090/prompt_service'; 
 
   constructor(private http: HttpClient) {}
 

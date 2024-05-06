@@ -1,4 +1,4 @@
-package pi.com.calendarservice.config;
+package com.example.promp_gpt;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;

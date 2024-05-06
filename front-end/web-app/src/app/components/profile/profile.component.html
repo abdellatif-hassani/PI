@@ -1,0 +1,15 @@
+<div class="profile-card">
+    <mat-card>
+      <mat-card-header>
+        <img mat-card-avatar [src]="profile.picture" alt="Profile Picture">
+        <mat-card-title>{{ profile?.name }}</mat-card-title>
+        <mat-card-subtitle>{{ profile?.email }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p><strong>Given Name:</strong> {{ profile?.given_name }}</p>
+        <p><strong>Family Name:</strong> {{ profile?.family_name }}</p>
+        <a [href]="'https://myaccount.google.com/?sub=' + profile?.sub" target="_blank">Go to Google Account</a>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  
