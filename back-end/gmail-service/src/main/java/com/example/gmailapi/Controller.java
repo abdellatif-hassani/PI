@@ -39,7 +39,7 @@ public class Controller {
 
     @PostMapping("/send")
     public Message send(@Valid @RequestBody  EmailRequest emailRequest, HttpServletRequest httpServletRequest) throws GeneralSecurityException, IOException {
-        String token= (String) httpServletRequest.getHeader("Authorization");
+        String token= httpServletRequest.getHeader("Authorization");
         if(token==null)
             throw new CredentialNotFoundException("Token not found");
         token=token.substring(7);

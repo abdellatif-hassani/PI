@@ -22,8 +22,8 @@ import java.util.Map;
 public class GoogleOpaqueTokenIntrospector implements ReactiveOpaqueTokenIntrospector {
 
     private final WebClient userInfoClient;
-    private String introspectUri="https://www.googleapis.com/oauth2/v3/tokeninfo";
-    private String introspectionUri="http://localhost:9090/oauth2/introspec";
+    private final String introspectUri="https://www.googleapis.com/oauth2/v3/tokeninfo";
+    private final String introspectionUri="http://localhost:9090/oauth2/introspec";
     @Value( "${spring.security.oauth2.client.registration.google.client-secret}")
     private String clientSecret;
     @Value( "${spring.security.oauth2.client.registration.google.client-id}")
@@ -40,7 +40,6 @@ public class GoogleOpaqueTokenIntrospector implements ReactiveOpaqueTokenIntrosp
                 .queryParam("access_token", token)
                 .build()
                 .toUri();
-       ;
         return userInfoClient.get()
                 .uri(uri)
                 .retrieve()
