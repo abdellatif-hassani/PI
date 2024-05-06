@@ -18,16 +18,15 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addPathPatterns("/events/**"); // Apply interceptor to specific paths
     }
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("http://localhost:4200")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*")
-                .exposedHeaders("Authorization")
-                .allowCredentials(true)
-                .maxAge(3600);
-    }
+//    @Override
+//    public void addCorsMappings(CorsRegistry registry) {
+//        registry.addMapping("/**")
+//                .allowedOrigins("http://localhost:4200")
+//                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+//                .allowedHeaders("*")
+//                .exposedHeaders("Authorization")
+//                .allowCredentials(true)
+//                .maxAge(3600);
+//    }
 
 }
-

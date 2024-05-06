@@ -35,7 +35,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     MatButtonModule, MatIconModule, MatToolbarModule
   ],
   providers: [
-    provideAnimationsAsync()
+    provideAnimationsAsync(),
   ],
   bootstrap: [AppComponent]
 })
