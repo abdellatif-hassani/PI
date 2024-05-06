@@ -52,7 +52,13 @@
 }
 
 .messages{
-  max-height: 310px;
+  max-height: 300px;
   overflow-y: auto;
+}
+
+.down-btn{
+  position: fixed;
+  right: 40px;
+  z-index: 1000;
 }
 

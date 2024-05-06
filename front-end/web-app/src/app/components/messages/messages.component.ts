@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { AuthGoogleService } from '../../services/auth-google.service';
 import { ApiService } from '../../services/api.service';
 
@@ -48,7 +48,7 @@ export class MessagesComponent {
       response => {
         console.log('Response:', response);
         // Store the request and response
-        // this.requestsAndResponses.push({ prompt: this.prompt, response: response.response, isUserPrompt: true });
+        this.requestsAndResponses.push({ prompt: this.prompt, response: response.response, isUserPrompt: true });
         // Clear the prompt
         this.prompt = '';
       },
@@ -59,5 +59,9 @@ export class MessagesComponent {
     );
   }
 
+  @ViewChild('messagesContainer') messagesContainer!: ElementRef;
+  scrollToBottom() {
+    this.messagesContainer.nativeElement.scrollTop = this.messagesContainer.nativeElement.scrollHeight;
+  }
   
 }

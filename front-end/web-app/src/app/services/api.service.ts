@@ -7,7 +7,7 @@ import { catchError } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class ApiService {
-  private apiUrl = 'http://localhost:9090/prompt_service'; 
+  private apiUrl = 'http://localhost:8000'; 
 
   constructor(private http: HttpClient) {}
 
@@ -17,7 +17,7 @@ export class ApiService {
       Authorization: `Bearer ${token}`
     });
     console.log('authorization:', headers.get('Authorization'));
-    return this.http.get<any>(`${this.apiUrl}/hello?prompt=${prompt}`, { headers }).pipe(
+    return this.http.get<any>(`${this.apiUrl}/prompt_service/api?message=${prompt}`, { headers }).pipe(
       catchError(error => {
         console.error('Error sending request:', error);
         throw error;
