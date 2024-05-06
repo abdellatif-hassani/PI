@@ -31,7 +31,8 @@ public class SecurityConfig {
 
              .oauth2ResourceServer(c -> c.opaqueToken(Customizer.withDefaults()));
 
-        http.csrf((csrf) -> csrf.disable());
+        http.csrf((csrf) -> csrf.disable())
+                .cors(corsSpec -> corsSpec.disable());
 
         return http.build();
     }
