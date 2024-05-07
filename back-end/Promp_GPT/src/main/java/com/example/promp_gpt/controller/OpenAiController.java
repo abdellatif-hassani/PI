@@ -42,8 +42,8 @@ public class OpenAiController {
        return promptResponse;
     }
     @GetMapping("")
-    public String get(){
-        return "Hello Worldjhghgg";
+    public Object get(){
+        return new PromptResponse();
     }
 
     //for making the request to the model for reformulate the response
