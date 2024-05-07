@@ -18,7 +18,7 @@ import java.util.List;
 //@CrossOrigin(origins = "*")
 public class CalendarController {
 
-    private GoogleCalendarService calendarService;
+    private final GoogleCalendarService calendarService;
 
     public CalendarController(GoogleCalendarService calendarService) {
         this.calendarService = calendarService;

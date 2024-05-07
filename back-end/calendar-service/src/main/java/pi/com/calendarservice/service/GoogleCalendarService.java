@@ -24,7 +24,7 @@ import java.util.List;
 
 @Service
 public class GoogleCalendarService {
-    private EventMapper eventMapper;
+    private final EventMapper eventMapper;
 
     public GoogleCalendarService(EventMapper eventMapper) {
         this.eventMapper = eventMapper;
@@ -43,20 +43,20 @@ public class GoogleCalendarService {
                 .build();
 
         Events events = service.events().list("primary").execute();
-        return eventMapper.toEventDtos(events.getItems());
+        return EventMapper.toEventDtos(events.getItems());
     }
 
     //addEvent method to add an event to the calendar
     public EventDto addEvent(String accessToken, EventDto eventDto) throws IOException, GeneralSecurityException {
         // Convert EventDto to Event
-        Event eventToAdd = eventMapper.toEvent(eventDto);
+        Event eventToAdd = EventMapper.toEvent(eventDto);
         GoogleCredential credential = new GoogleCredential().setAccessToken(accessToken);
 
         Calendar service = new Calendar.Builder(
                 GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY, credential)
                 .setApplicationName(APPLICATION_NAME)
                 .build();
-        return eventMapper.toEventDto(service.events().insert("primary", eventToAdd).execute());
+        return EventMapper.toEventDto(service.events().insert("primary", eventToAdd).execute());
     }
 
     //updateEvent method to update an event in the calendar
@@ -69,9 +69,9 @@ public class GoogleCalendarService {
                 .build();
         List<EventDto> eventDtos = searchEventsBySummary(accessToken, eventSummary);
         EventDto eventDto = eventDtos.get(0);
-        Event eventToUpdate = eventMapper.toEvent(updatedEvent);
+        Event eventToUpdate = EventMapper.toEvent(updatedEvent);
         Event event =  service.events().update("primary", eventDto.getId(), eventToUpdate).execute();
-        return eventMapper.toEventDto(event);
+        return EventMapper.toEventDto(event);
     }
 
     //searchEvent method to search for an event in the calendar
@@ -87,7 +87,7 @@ public class GoogleCalendarService {
         Events events = service.events().list("primary")
                 .setQ(keyword)
                 .execute();
-        return eventMapper.toEventDtos(events.getItems());
+        return EventMapper.toEventDtos(events.getItems());
     }
 
 
@@ -131,7 +131,7 @@ public class GoogleCalendarService {
                 .setTimeMax(new DateTime(endDate))
                 .execute();
 
-        return eventMapper.toEventDtos(events.getItems());
+        return EventMapper.toEventDtos(events.getItems());
     }
 
 
