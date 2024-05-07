@@ -58,7 +58,10 @@
 
 .down-btn{
   position: fixed;
-  right: 40px;
+  bottom: 4em;
+  right: 0.8em;
   z-index: 1000;
+  font-size: 3em;
+  padding: 1em;
 }
 
