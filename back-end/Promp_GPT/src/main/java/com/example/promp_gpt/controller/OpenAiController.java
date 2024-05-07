@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("prompt_service")
+//@RequestMapping("prompt_service")
 
 public class OpenAiController {
 
