@@ -20,7 +20,6 @@ public class CORSConfiguration implements WebFluxConfigurer {
                 .allowedMethods("*")
                 .exposedHeaders(HttpHeaders.SET_COOKIE);
     }
-
     @Bean
     public CorsWebFilter corsWebFilter() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
