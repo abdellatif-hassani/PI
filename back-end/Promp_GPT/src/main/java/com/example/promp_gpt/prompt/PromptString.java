@@ -105,73 +105,41 @@ public class PromptString {
             """;
 
     public static final  String systemText_RePrompt ="""
-              We received a user response indicating modifications to a previously generated JSON object. The original JSON object was designed to manage email responses based on user input. Here's the original object:
-              
-              {original_json_object}
-              
-              The user provided the following feedback and requested changes specifically related to email management:
-              
-              {user_modifications}
-              
-              Your task is to update the original JSON object according to the user's modifications, ensuring it is tailored to handle email operations more effectively. Ensure the structure adheres to the defined specifications and integrates the user's feedback accurately.
-              
-              Additionally, include two new attributes in the JSON object:
-              1. "satisfied": "True" or "False" - Indicate whether the user's feedback has been fully integrated. If the user is satisfied with what we suggested to him.
-              2. "wantToCancel": "True" or "False" - Indicate whether the user wants to continue modifying or interacting with the email management feature or if they want to cancel their request for any action or change. If the user wants to cancel his request and forget about it in case that he want to do another thing make it true
-               or he don't want to send that email make it true
-              
-              Generate the updated JSON object and ensure it reflects the requested changes and additions.
-               
-               for example if the user user_modifications is "just forgive it" the satisfied should be false and wantToCancel should be false
-                If the user modification is "just forgive it":
-                satisfied: false
-                wantToCancel: true
-                If the user modification is "send the email":
-                satisfied: true
-                wantToCancel: false
-                If the user modification is "i don't want to send that email":
-                satisfied: false
-                wantToCancel: true
-                If the user modification is "i want to send that email":
-                satisfied: true
-                wantToCancel: false
-                If the user modification is "please change the recipient to john@example.com":
-                satisfied: false
-                wantToCancel: false
-                If the user modification is "update the subject to Meeting Agenda":
-                satisfied: false
-                wantToCancel: false
-                If the user modification is "add an attachment with the file presentation.pdf":
-                satisfied: false
-                wantToCancel: false
-                If the user modification is "remove the attachment":
-                satisfied: false
-                wantToCancel: false
-                If the user modification is "change the message to Dear Team,":
-                satisfied: false
-                wantToCancel: false
-                If the user modification is "cancel this email":
-                satisfied: false
-                wantToCancel: true
-                If the user modification is "please proceed with sending the email":
-                satisfied: true
-                wantToCancel: false
-                If the user modification is "discard this draft":
-                satisfied: false
-                wantToCancel: true
-                
-                You should respond with JSON object that has the following structure:
-                      "typeAnswer": "email",
-                      "answerRelatedToGmail": 
-                            "to": "string",
-                            "subject": "string",
-                            "message": "string",
-                            "attachments": 
-                                  "name": "string",
-                                  "url": "string"  
-                      ,
-                      "methodToUse": "send or get or create or update or delete"
-                      "satisfied": "false or true"
-                      "wantToCancel":"false or true"
+            We are developing a chat application to help users manage their Gmail interactions, such as sending emails. We use JSON objects to structure these interactions based on user inputs.
+                        
+            Here is the original JSON object based on previous feedback:
+            {original_json_object}
+                        
+            We have received specific user feedback requesting changes to this email management JSON object:
+            {user_modifications}
+                        
+            Your task:
+            1. Update the original JSON object based on the user's requested modifications.
+            2. Ensure the updated JSON object supports email operations effectively and integrates user feedback accurately.
+                        
+            Include these new attributes in the JSON object:
+            - 'satisfied': 'True' or 'False' - Reflects whether the user's feedback has been fully integrated and if they are satisfied with the modifications.
+            - 'wantToCancel': 'True' or 'False' - Indicates if the user wishes to continue modifying the email feature or cancel their request.
+                        
+            Based on typical user modifications, set the attributes here is some examples :
+            - If the modification is 'just forget it', set 'satisfied' to False and 'wantToCancel' to True.
+            - If the modification is 'send the email', set 'satisfied' to True and 'wantToCancel' to False.
+                        
+            Please adjust the 'answerRelatedToGmail' part of the JSON object accordingly and generate the updated JSON object with the new structure:
+
+              "typeAnswer": "email",
+              "answerRelatedToGmail": 
+                "to": "string",
+                "subject": "string",
+                "message": "string",
+                "attachments": 
+                    "name": "string",
+                    "url": "string"
+              ,
+              "methodToUse": "send or get or create or update or delete",
+              "satisfied": "false or true",
+              "wantToCancel": "false or true"
+            
+                        
             """;
 }

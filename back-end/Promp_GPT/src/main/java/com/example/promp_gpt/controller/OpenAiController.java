@@ -1,6 +1,7 @@
 package com.example.promp_gpt.controller;
 
 import com.example.promp_gpt.entities.PromptResponse;
+import com.example.promp_gpt.entities.RePromptRequest;
 import com.example.promp_gpt.prompt.PromptString;
 import com.example.promp_gpt.service.OpenAiService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -22,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("prompt_service")
+@RequestMapping("")
 
 public class OpenAiController {
 
@@ -40,14 +41,14 @@ public class OpenAiController {
     }
     @GetMapping("")
     public String get(){
-        return "Hello World";
+        return "Hello Worldjhghgg";
     }
 
     //for making the request to the model for reformulate the response
     @PostMapping("/reprompt")
-    public PromptResponse makeRePrompt(@RequestBody PromptResponse promptResponse,@RequestBody String userText) throws JsonProcessingException {
-         promptResponse =openAiService.getRePrompt(promptResponse,userText,PromptString.systemText_RePrompt);
-         return promptResponse;
+    public PromptResponse makeRePrompt(@RequestBody RePromptRequest rePromptRequest) throws JsonProcessingException {
+         return  openAiService.getRePrompt(rePromptRequest.getPromptResponse(),rePromptRequest.getUserText(),PromptString.systemText_RePrompt);
+
     }
 
     //for executing the final response

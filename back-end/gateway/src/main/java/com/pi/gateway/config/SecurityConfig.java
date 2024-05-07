@@ -1,5 +1,6 @@
 package com.pi.gateway.config;
 
+import com.google.common.net.HttpHeaders;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +10,11 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 
 import org.springframework.security.oauth2.server.resource.introspection.ReactiveOpaqueTokenIntrospector;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.pattern.PathPatternParser;
 
 @Configuration
 @EnableWebFluxSecurity
@@ -26,7 +31,8 @@ public class SecurityConfig {
 
         http.authorizeExchange(
                 exchanges -> exchanges
-                        .anyExchange().authenticated()
+                        .pathMatchers("/c").permitAll()
+                        .anyExchange().permitAll()
                 )
 
              .oauth2ResourceServer(c -> c.opaqueToken(Customizer.withDefaults()));
@@ -41,4 +47,6 @@ public class SecurityConfig {
     public ReactiveOpaqueTokenIntrospector introspector() {
         return new GoogleOpaqueTokenIntrospector(userInfoClient);
     }
+
+
 }
