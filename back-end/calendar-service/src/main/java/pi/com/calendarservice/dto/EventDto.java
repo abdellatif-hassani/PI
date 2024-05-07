@@ -1,6 +1,5 @@
 package pi.com.calendarservice.dto;
 
-import com.google.api.client.util.DateTime;
 import lombok.*;
 
 // EventDto class to represent necessary information for an event

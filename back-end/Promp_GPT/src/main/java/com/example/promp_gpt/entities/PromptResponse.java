@@ -12,4 +12,6 @@ public class PromptResponse {
     private GmailApiDto answerRelatedToGmail;
     private EventEntity answerRelatedToCalendar;
     private String methodToUse;
+    private Boolean satisfied;
+    private Boolean wantToCancel;
 }

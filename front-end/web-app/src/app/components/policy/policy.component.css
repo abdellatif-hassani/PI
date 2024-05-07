@@ -1,0 +1,38 @@
+/* terms-and-conditions.component.css */
+.terms-container {
+    max-width: 800px;
+    margin: auto;
+    padding-top: 3em;
+}
+
+.terms-container h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.terms-container p {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.terms-container ol {
+    padding-left: 20px;
+}
+
+.terms-container ol li {
+    margin-bottom: 10px;
+}
+
+.terms-container p:last-child {
+    margin-top: 20px;
+}
+
+.backFlesh{
+    display: inline;
+}
+.terms-container span{
+    font-size: normal;
+    margin: 0.5em;
+    font-family: 'Roboto', sans-serif;
+}

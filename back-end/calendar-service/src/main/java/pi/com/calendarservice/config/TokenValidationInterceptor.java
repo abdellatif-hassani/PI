@@ -13,6 +13,7 @@ public class TokenValidationInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String accessTokenHeader = request.getHeader("Authorization");
+//        System.out.println("Access token header: " + accessTokenHeader);
         String accessToken = TokenExtractor.extractToken(accessTokenHeader);
         if (accessToken == null) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -24,4 +25,3 @@ public class TokenValidationInterceptor implements HandlerInterceptor {
     }
 
 }
-

@@ -15,10 +15,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/events")
 //allow requests from any origin
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class CalendarController {
 
-    private GoogleCalendarService calendarService;
+    private final GoogleCalendarService calendarService;
 
     public CalendarController(GoogleCalendarService calendarService) {
         this.calendarService = calendarService;
@@ -27,6 +27,7 @@ public class CalendarController {
     @GetMapping("")
     public List<EventDto> getEvents(HttpServletRequest request) throws IOException, GeneralSecurityException {
         String accessToken = (String) request.getAttribute("accessToken");
+        System.out.println("Access token: " + accessToken);
         return calendarService.getEvents(accessToken);
     }
 
