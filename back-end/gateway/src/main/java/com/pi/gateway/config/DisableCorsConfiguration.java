@@ -28,43 +28,10 @@ public class DisableCorsConfiguration implements WebFluxConfigurer {
                 //.allowCredentials(true)
                 .allowedOrigins("*")
                 .allowedHeaders("*")
-                .allowedMethods("*")
-                .exposedHeaders(HttpHeaders.SET_COOKIE);
+                .allowedMethods("*");
+                //.exposedHeaders(HttpHeaders.SET_COOKIE);
     }
 
-    @Bean
-    public CorsWebFilter corsWebFilter() {
 
-        // Disable per-request CORS
-
-        return new CorsWebFilter(new UrlBasedCorsConfigurationSource()){
-            @Override
-            @NotNull
-            public Mono<Void> filter(@NotNull ServerWebExchange exchange, @NotNull WebFilterChain chain) {
-                return chain.filter(exchange);
-            }
-        };
-    }
-
-    /**
-     * HACK ALERT!!!!
-     * Spring WebFlux CORS logic is hard-coded, this is a low-level hack to bypass it.
-     * see {@link org.springframework.web.reactive.handler.AbstractHandlerMapping#getHandler}.
-     *
-     */
-    @Bean
-    @Primary
-    public RoutePredicateHandlerMapping NoCorsRoutePredicateHandlerMapping(
-            FilteringWebHandler webHandler, RouteLocator routeLocator,
-            GlobalCorsProperties globalCorsProperties, Environment environment) {
-        return new RoutePredicateHandlerMapping(webHandler, routeLocator,
-                globalCorsProperties, environment){
-            @Override
-            @NotNull
-            public Mono<Object> getHandler(@NotNull ServerWebExchange exchange) {
-                return getHandlerInternal(exchange).map(Function.identity());
-            }
-        };
-    }
 
 }

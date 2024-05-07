@@ -23,11 +23,9 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-<<<<<<< HEAD
-//@RequestMapping("prompt_service")
-=======
+
 @RequestMapping("")
->>>>>>> d625fc1d7330cad58880a585daef96783c73e32b
+
 
 public class OpenAiController {
 
