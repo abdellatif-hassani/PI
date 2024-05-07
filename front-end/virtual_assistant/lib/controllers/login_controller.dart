@@ -1,4 +1,4 @@
-import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -7,6 +7,7 @@ import 'package:virtual_assistant/models/user.dart';
 import 'package:virtual_assistant/pages/MainPage.dart';
 import 'package:virtual_assistant/pages/chat_page.dart';
 import 'package:virtual_assistant/services/login_service.dart';
+import 'package:virtual_assistant/services/storage_serivce.dart';
 import 'package:virtual_assistant/services/user_service.dart';
 
 class LoginController with ChangeNotifier {
@@ -16,37 +17,38 @@ class LoginController with ChangeNotifier {
   User? user;
   UserService userService = UserService();
   LoginService loginService;
-  LoginController({required this.loginService});
-  Future login(BuildContext context) async {
-    _loginData.status = Status.LOADING;
-    notifyListeners();
-    user = await userService.getUser();
-    if (user != null) {
-      Navigator.pushReplacementNamed(context, '/chat');
-      return;
-    } else {
-      _loginData.data ??= await loginService.signInWithGoogle();
-
-      if (loginData.data?.authentication != null) {
-        GoogleSignInAuthentication googleAuth =
-            await _loginData.data!.authentication;
-        String? idToken = googleAuth.idToken;
-        String? refreshToken = googleAuth.accessToken;
-        user = googleSignInAccountToUser(
-            _loginData.data!, idToken!, refreshToken!);
-        loginData.status = Status.SUCCESS;
-        navigateToChat(context);
-        if (user != null) userService.saveUser(user!);
-      } else {
-        loginData.status = Status.ERORR;
-        showErrorSnackBar(context, "Error has accured while login in");
-      }
-    }
-
-    notifyListeners();
-  }
+   LoginController({required this.loginService});
+  // Future login(BuildContext context) async {
+  //   _loginData.status = Status.LOADING;
+  //   notifyListeners();
+  //   user = await userService.getUser();
+  //   if (user != null) {
+  //     navigateToChat(context);
+  //     return;
+  //   } else {
+  //     _loginData.data ??= await loginService.signInWithGoogle();
+  //
+  //     if (loginData.data?.authentication != null) {
+  //       GoogleSignInAuthentication googleAuth =
+  //           await _loginData.data!.authentication;
+  //       String? idToken = googleAuth.idToken;
+  //       String? refreshToken = googleAuth.accessToken;
+  //       user = googleSignInAccountToUser(
+  //           _loginData.data!, idToken!, refreshToken!);
+  //       loginData.status = Status.SUCCESS;
+  //       navigateToChat(context);
+  //       if (user != null) userService.saveUser(user!);
+  //     } else {
+  //       loginData.status = Status.ERORR;
+  //       showErrorSnackBar(context, "Error has accured while login in");
+  //     }
+  //   }
+  //
+  //   notifyListeners();
+  // }
 
   Future logout() async {
+    await StorageService.instance.clear();
     await loginService.googleLogout();
     _loginData.data = null;
     userService.deleteUser();
@@ -87,7 +89,7 @@ class LoginController with ChangeNotifier {
   //   }    }
   //}
     void navigateToChat(BuildContext context) {
-      Navigator.push(
+      Navigator.pushReplacement(
           context,
           MaterialPageRoute(
               builder: (BuildContext context) =>
@@ -95,16 +97,51 @@ class LoginController with ChangeNotifier {
     }
 
     navigateToLogin(BuildContext context) {
-      Navigator.push(
+      Navigator.pushReplacement(
           context,
           MaterialPageRoute(
               builder: (BuildContext context) =>
                   LoginPage()));
     }
 
-  Future<User?> isLoggedIn() async{
-   await Future.delayed(Duration(seconds: 2));
-   user = await userService.getUser();
-    return user!;
+  Future<bool> isLoggedIn() async{
+    _loginData.data=await loginService.getGoogleSignInAccountSilenlty();
+    _loginData.data= loginService.getCurrentUser();
+
+    if(_loginData.data!=null){
+      Map<String, String> authHeaders = await _loginData.data!.authHeaders;
+      setUser(googleSignInAccountToUser(
+          _loginData.data!, authHeaders['Authorization']!.split(" ")[1], ""));
+      await userService.saveUser(user!);
+      return true;
+    }
+    return false;
+
+  }
+
+  Future login(BuildContext  context)async{
+    try {
+      _loginData.status = Status.LOADING;
+      notifyListeners();
+      _loginData.data=await loginService.getGoogleSignInAccountSilenlty();
+      //_loginData.data = loginService.getCurrentUser();
+     _loginData.data ??= await loginService.signInWithGoogle();
+      Map<String, String> authHeaders = await _loginData.data!.authHeaders;
+      setUser(googleSignInAccountToUser(
+          _loginData.data!, authHeaders['Authorization']!.split(" ")[1], ""));
+      userService.saveUser(user!);
+
+      _loginData.status = Status.SUCCESS;
+      navigateToChat(context);
+    }catch(e){
+      _loginData.status = Status.ERORR;
+      notifyListeners();
+      showErrorSnackBar(context, "Error has accured while login in");
+    }
+
+  }
+  setUser(User? user) {
+    this.user = user;
+    notifyListeners();
   }
 }

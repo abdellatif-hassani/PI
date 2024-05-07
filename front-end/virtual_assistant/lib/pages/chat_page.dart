@@ -3,11 +3,15 @@ import 'package:chat_bubbles/message_bars/message_bar.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:virtual_assistant/controllers/chat_controller.dart';
 import 'package:virtual_assistant/controllers/login_controller.dart';
 import 'package:virtual_assistant/models/user.dart';
+import 'package:virtual_assistant/services/storage_serivce.dart';
 import 'package:virtual_assistant/widgets/messages_list.dart';
+
+import '../widgets/linear_progress_indecator.dart';
 
 String username = 'User';
 String email = 'user@example.com';
@@ -40,6 +44,7 @@ class ChatterScreen extends StatefulWidget {
 
 class _ChatterScreenState extends State<ChatterScreen> {
   final chatMsgTextController = TextEditingController();
+  final scrollController = ScrollController(); // Add this line
 
 
   @override
@@ -66,17 +71,15 @@ class _ChatterScreenState extends State<ChatterScreen> {
     @override
     Widget build(BuildContext context) {
     ChatController chatController =context.read<ChatController>();
+
       return Scaffold(
         appBar: AppBar(
           iconTheme: IconThemeData(color: Colors.deepPurple),
           elevation: 0,
           bottom: PreferredSize(
-            preferredSize: Size(25, 10),
+            preferredSize: Size(5, 5),
             child: Container(
-              child: LinearProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                backgroundColor: Colors.blue[100],
-              ),
+              child: LinearProgressIndicatorWidget(),
               decoration: BoxDecoration(
                 // color: Colors.blue,
 
@@ -102,19 +105,31 @@ class _ChatterScreenState extends State<ChatterScreen> {
                         fontSize: 16,
                         color: Colors.deepPurple),
                   ),
-                  Text('by ishandeveloper',
-                      style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 8,
-                          color: Colors.deepPurple))
+
                 ],
               ),
             ],
           ),
           actions: <Widget>[
-            GestureDetector(
-              child: Icon(Icons.more_vert),
-            )
+            PopupMenuButton<int>(
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: 1,
+                  child: Text("clear chat"),
+                ),
+                PopupMenuItem(
+                  value: 2,
+                  child: Text("Second item"),
+                ),
+              ],
+              onSelected: (value) {
+                // Handle your menu item click here
+                if (value == 1) {
+                  // Handle first item click
+                  chatController.clearChat();
+                }
+              },
+            ),
           ],
         ),
         drawer: Drawer(
@@ -124,8 +139,8 @@ class _ChatterScreenState extends State<ChatterScreen> {
                 decoration: BoxDecoration(
                   color: Colors.deepPurple[900],
                 ),
-                accountName: Text(username),
-                accountEmail: Text(email),
+                accountName: Text(chatController.getUser()?.name??" no one "),
+                accountEmail: Text(chatController.getUser()?.email??""),
 
                 onDetailsPressed: () {},
               ),
@@ -146,9 +161,9 @@ class _ChatterScreenState extends State<ChatterScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
 
           children: <Widget>[
-           Expanded(child: SingleChildScrollView(child: MessagesList())),
+           Expanded(child: MessagesList()),
             Container(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+
               decoration: kMessageContainerDecoration,
               alignment: Alignment.bottomCenter,
               child: MessageBar(
@@ -160,9 +175,20 @@ class _ChatterScreenState extends State<ChatterScreen> {
                       color: Colors.black,
                       size: 24,
                     ),
-                    onTap: () {
-                       chatController.showPicker(context);
-                    },
+                    onTap: ()async {
+                  var status = await Permission.storage.request();
+                  if (status.isGranted) {
+                    chatController.showPicker(context);
+                  print('Storage permission granted');
+                  } else if (status.isDenied) { 
+                    context.read<LoginController>().showErrorSnackBar(context, "Storage permission denied");
+                    
+                  print('Storage permission denied');
+                  }
+                  },
+                     
+                      
+                    
                   ),
                   Padding(
                     padding: EdgeInsets.only(left: 8, right: 8),

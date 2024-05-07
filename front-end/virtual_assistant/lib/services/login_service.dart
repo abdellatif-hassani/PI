@@ -3,7 +3,7 @@ import 'package:virtual_assistant/exceptions/authentication_exception.dart';
 import 'package:virtual_assistant/models/user.dart';
 
 class LoginService {
-  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email',  "https://www.googleapis.com/auth/contacts.readonly"],serverClientId: "426322832792-i9frut2ssb3uu29vilivn0t148h09rdu.apps.googleusercontent.com",forceCodeForRefreshToken: true);
+  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email',  "https://www.googleapis.com/auth/contacts.readonly"],clientId: "426322832792-i9frut2ssb3uu29vilivn0t148h09rdu.apps.googleusercontent.com");
 
   GoogleSignInAccount? _user;
 
@@ -29,13 +29,16 @@ class LoginService {
       print(error);
     }
   }
-// Future<GoogleSignInAccount?> getGoogleSignInAccountSilenlty() async {
-//     try {
-//       _user = await _googleSignIn.signInSilently();
-//       _googleSignIn.
-//       return _user!;
-//     } catch (error) {
-//       return null;
-//     }
-//   }
+Future<GoogleSignInAccount?> getGoogleSignInAccountSilenlty() async {
+    try {
+      _user = await _googleSignIn.signInSilently();
+
+      return _user!;
+    } catch (error) {
+      return null;
+    }
+  }
+  GoogleSignInAccount? getCurrentUser() {
+    return _googleSignIn.currentUser;
+  }
 }
