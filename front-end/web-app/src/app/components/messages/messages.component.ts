@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, OnInit } from '@angular/core';
 import { AuthGoogleService } from '../../services/auth-google.service';
 import { ApiService } from '../../services/api.service';
 
@@ -7,10 +7,17 @@ import { ApiService } from '../../services/api.service';
   templateUrl: './messages.component.html',
   styleUrls: ['./messages.component.css']
 })
-export class MessagesComponent {
+export class MessagesComponent implements OnInit{
   requestsAndResponses: { prompt: string, response: any, isUserPrompt: boolean }[] = [];
-  //fill this list with the random requests and responses
+  prompt: string = '';
+  token: any = '';
+  user: any = '';
+
   
+  ngOnInit(): void {
+    this.user = this.authService.getProfile();
+  }
+
   constructor(
     private authService: AuthGoogleService,
     private apiService: ApiService
@@ -29,10 +36,6 @@ export class MessagesComponent {
     ];
   }
 
-  prompt: string = '';
-  token: any = '';
-  user: any = this.authService.getProfile();
-
   sendRequest() {
     // Check if prompt is empty
     if (!this.prompt.trim()) {
@@ -48,7 +51,7 @@ export class MessagesComponent {
       response => {
         console.log('Response:', response);
         // Store the request and response
-        this.requestsAndResponses.push({ prompt: this.prompt, response: response.response, isUserPrompt: true });
+        this.requestsAndResponses.push({ prompt: this.prompt, response: response.answerText, isUserPrompt: true });
         // Clear the prompt
         this.prompt = '';
       },

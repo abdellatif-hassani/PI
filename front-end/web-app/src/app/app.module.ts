@@ -21,6 +21,7 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { MessagesComponent } from './components/messages/messages.component';
 import { PolicyComponent } from './components/policy/policy.component';
+import { TestLoginComponent } from './components/test-login/test-login.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { PolicyComponent } from './components/policy/policy.component';
     ProfileComponent,
     MessagesComponent,
     PolicyComponent,
+    TestLoginComponent,
   
   ],
   imports: [
