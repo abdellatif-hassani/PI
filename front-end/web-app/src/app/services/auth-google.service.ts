@@ -13,7 +13,7 @@ export class AuthGoogleService {
 
   constructor(private oAuthService: OAuthService, private router: Router) {
     this.initConfiguration();
-    this.startTokenRefreshTimer();
+    // this.startTokenRefreshTimer();
   }
 
   initConfiguration() {
@@ -22,7 +22,7 @@ export class AuthGoogleService {
       strictDiscoveryDocumentValidation: false,
       redirectUri: window.location.origin + '/test',
       clientId: '620536565122-91ob5s78lu1t6pjcl2tbb0v0rdban5cj.apps.googleusercontent.com',
-      scope: 'openid profile email https://www.googleapis.com/auth/calendar',
+      scope: 'openid profile email https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/gmail.modify ',
     };
     
     this.oAuthService.configure(authConfig);

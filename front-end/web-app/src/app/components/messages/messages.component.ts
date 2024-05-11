@@ -1,8 +1,8 @@
 import { Component, ElementRef, ViewChild, OnInit } from '@angular/core';
 import { AuthGoogleService } from '../../services/auth-google.service';
 import { ApiService } from '../../services/api.service';
-import { AnyResponse, MessageResponse, EmailDetails
-, EmailResponse, CalendarDetails, CalendarResponse
+import { AnyResponse, MessageResponse, EmailDetails, PromptResponse
+, EmailResponse, CalendarDetails, CalendarResponse, RePromptRequest
  } from '../../models/response-types';
  import { isMessageResponse, isEmailResponse, isCalendarResponse } from '../../helpers/response-type-guards';
 
@@ -167,17 +167,36 @@ export class MessagesComponent implements OnInit{
   }
 
 
-  confirmEmail(reprompt: AnyResponse) {
-    this.apiService.sendEmail(reprompt, this.token).subscribe(
-      response => {
-        console.log('Email sent:', response);
-        this.requestsAndResponses.push({ prompt: '', response: response, isUserPrompt: false });
-        this.scrollToBottom();
-      },
-      error => {
-        console.error('Error sending email:', error);
-      }
-    );
+  confirmEmail(response: AnyResponse) {
+    if (isEmailResponse(response)) {
+      const promptResponse: PromptResponse = {
+        ...response,
+        typeAnswer: response.typeAnswer,
+        methodToUse: response.methodToUse,
+        satisfied: response.satisfied,
+        wantToCancel: response.wantToCancel,
+        answerRelatedToGmail: response.answerRelatedToGmail
+      };
+  
+      const rePromptRequest: RePromptRequest = {
+        promptResponse: promptResponse,
+        userText: "Please confirm sending this email"
+      };
+  
+      console.log('Sending email:', rePromptRequest);
+      this.apiService.sendEmail(rePromptRequest, this.token).subscribe(
+        response => {
+          console.log('Email sent:', response);
+          this.requestsAndResponses.push({ prompt: '', response: response, isUserPrompt: false });
+          this.scrollToBottom();
+        },
+        error => {
+          console.error('Error sending email:', error);
+        }
+      );
+    } else {
+      console.error('Provided response is not an email response:', response);
+    }
   }
 
 
