@@ -11,9 +11,9 @@ import { Router } from '@angular/router';
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent implements OnInit {
-// toProfile() {
-//     this.router.navigate(['/profile']);
-// }
+  toProfile() {
+      this.router.navigate(['/profile']);
+  }
   profile: any;
   
 
@@ -24,8 +24,6 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.showData();
-    console.log("profile", this.profile);
-    console.log("token : ", this.authService.getToken());
   }
 
   showData() {

@@ -17,9 +17,7 @@ import java.util.List;
 //allow requests from any origin
 //@CrossOrigin(origins = "*")
 public class CalendarController {
-
     private final GoogleCalendarService calendarService;
-
     public CalendarController(GoogleCalendarService calendarService) {
         this.calendarService = calendarService;
     }
@@ -56,10 +54,10 @@ public class CalendarController {
         String accessToken = (String) request.getAttribute("accessToken");
         return calendarService.updateEvent(accessToken, eventSummary, updatedEvent);
     }
-
     @GetMapping("/searchByDate")
     public List<EventDto> searchEventsByDate(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
                                              HttpServletRequest request) throws IOException, GeneralSecurityException {
+        System.out.println("Date: " + date);
         String accessToken = (String) request.getAttribute("accessToken");
         return calendarService.searchEventsByDate(accessToken, date);
     }

@@ -117,7 +117,7 @@ public class GoogleCalendarService {
         // Convert LocalDate to Date for API query
         Date startDate = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date endDate = Date.from(date.atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant());
-
+        System.out.println("Start date: " + startDate);
         GoogleCredential credential = new GoogleCredential().setAccessToken(accessToken);
 
         Calendar service = new Calendar.Builder(

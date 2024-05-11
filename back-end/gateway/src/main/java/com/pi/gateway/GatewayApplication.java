@@ -32,7 +32,7 @@ public class GatewayApplication {
 											.map(securityContext -> (OAuth2AccessToken) securityContext.getAuthentication().getCredentials())
 											.map(OAuth2AccessToken::getTokenValue)
 											.map(token -> {
-												exchange.getRequest().mutate().header("Authorization", token);
+												exchange.getRequest().mutate().header("Authorization", "Bearer "+token);
 												return exchange;
 											})
 											.defaultIfEmpty(exchange)
