@@ -12,8 +12,7 @@ export class AuthGoogleService {
   private refreshSubscription!: Subscription;
 
   constructor(private oAuthService: OAuthService, private router: Router) {
-    this.initConfiguration();
-    // this.startTokenRefreshTimer();
+    
   }
 
   initConfiguration() {
@@ -43,6 +42,8 @@ export class AuthGoogleService {
 
   login() {
     this.oAuthService.initImplicitFlow();
+    this.initConfiguration();
+    this.startTokenRefreshTimer();
   }
 
   logout() {

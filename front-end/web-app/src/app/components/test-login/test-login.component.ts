@@ -16,10 +16,10 @@ export class TestLoginComponent implements OnInit{
     }
 
     ngOnInit(): void {
-        
+      this.authService.initConfiguration();
       setTimeout(() => {
           this.router.navigate(['/dashboard']);
-      }, 200); 
+      }, 300); 
          
     }
     
