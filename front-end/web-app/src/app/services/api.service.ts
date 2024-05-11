@@ -17,7 +17,7 @@ export class ApiService {
       Authorization: `Bearer ${token}`
     });
     console.log('authorization:', headers.get('Authorization'));
-    return this.http.get<any>(`${this.apiUrl}`, { headers }).pipe(
+    return this.http.post<any>(`${this.apiUrl}/prompt`, prompt, { headers }).pipe(
       catchError(error => {
         console.error('Error sending request:', error);
         throw error;

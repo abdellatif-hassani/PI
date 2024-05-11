@@ -20,14 +20,15 @@ export class AuthGoogleService {
     const authConfig: AuthConfig = {
       issuer: 'https://accounts.google.com',
       strictDiscoveryDocumentValidation: false,
-      redirectUri: window.location.origin + '/dashboard',
+      redirectUri: window.location.origin + '/test',
       clientId: '620536565122-91ob5s78lu1t6pjcl2tbb0v0rdban5cj.apps.googleusercontent.com',
       scope: 'openid profile email https://www.googleapis.com/auth/calendar',
     };
-
+    
     this.oAuthService.configure(authConfig);
     this.oAuthService.setupAutomaticSilentRefresh();
     this.oAuthService.loadDiscoveryDocumentAndTryLogin().then(() => {
+      console.log('************Discovery Document loaded:', this.oAuthService.discoveryDocumentLoaded$)
       if (this.oAuthService.hasValidAccessToken()) {
         this.storeToken(this.oAuthService.getAccessToken());
       }

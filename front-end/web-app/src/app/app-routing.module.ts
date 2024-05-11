@@ -8,6 +8,7 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { MessagesComponent } from './components/messages/messages.component';
 import { PolicyComponent } from './components/policy/policy.component';
 import { AuthGuard } from './guards/auth.guard';
+import { TestLoginComponent } from './components/test-login/test-login.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -15,14 +16,15 @@ const routes: Routes = [
   { 
     path: 'dashboard',
     component: DashboardComponent,
-    // canActivate: [AuthGuard], // Protect the dashboard route
+     canActivate: [AuthGuard], // Protect the dashboard route
     children: [
       { path: '', redirectTo: 'messages', pathMatch: 'full' }, // Default route
       { path: 'profile', component: ProfileComponent },
       { path: 'messages', component: MessagesComponent },
     ]
   },
-  { path: 'policy', component: PolicyComponent }
+  { path: 'policy', component: PolicyComponent },
+  { path: 'test', component: TestLoginComponent },
 ];
 
 @NgModule({

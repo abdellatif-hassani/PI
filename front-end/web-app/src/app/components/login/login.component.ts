@@ -8,7 +8,8 @@ import { AuthGoogleService } from '../../services/auth-google.service';
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-    private authService = inject(AuthGoogleService);
+    
+    constructor(private authService: AuthGoogleService) {}
 
     signInWithGoogle() {
         this.authService.login();
