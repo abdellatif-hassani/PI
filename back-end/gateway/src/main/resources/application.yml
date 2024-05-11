@@ -1,10 +1,29 @@
 spring:
-  cloud:
-    gateway:
-      globalcors:
-        corsConfigurations:
-          '[/**]':
-            allowedOrigins: "*"
-            allowedMethods: "*"
-            allowedHeaders: "*"
-            maxAge: 3600
+  application:
+    name: Gateway
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 807165846557-6ga71u9mpmaeljgbfgfim86dbhae91ue.apps.googleusercontent.com
+            client-secret: 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
+            redirect-uri: http://localhost:9090/login/oauth2/code/google
+            scope: openid,profile,email,https://www.googleapis.com/auth/calendar,https://www.googleapis.com/auth/gmail.readonly
+
+server:
+  port: 9090
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+
+
