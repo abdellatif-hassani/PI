@@ -1,11 +1,10 @@
 package com.example.promp_gpt.entities;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter @Setter
 @ToString
+@NoArgsConstructor
 public class PromptResponse {
     private String typeAnswer;
     private String answerText;
