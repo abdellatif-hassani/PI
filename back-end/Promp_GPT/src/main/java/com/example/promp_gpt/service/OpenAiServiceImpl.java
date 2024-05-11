@@ -3,6 +3,7 @@ package com.example.promp_gpt.service;
 import com.example.promp_gpt.entities.EventEntity;
 import com.example.promp_gpt.entities.GmailApiDto;
 import com.example.promp_gpt.entities.PromptResponse;
+import com.example.promp_gpt.exception.SomeThingWentWrongException;
 import com.example.promp_gpt.service.clients.CalenderClient;
 import com.example.promp_gpt.service.clients.GmailClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -21,6 +22,9 @@ import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -80,7 +84,7 @@ public class OpenAiServiceImpl implements OpenAiService {
     }
 
     @Override
-    public Object sendToTheCorrectService(PromptResponse promptResponse,String token) {
+    public Object sendToTheCorrectService(PromptResponse promptResponse,String token) throws SomeThingWentWrongException {
 
         if (promptResponse.getTypeAnswer().equals("email")) {
             GmailApiDto gmailApiDto = promptResponse.getAnswerRelatedToGmail();
@@ -89,35 +93,48 @@ public class OpenAiServiceImpl implements OpenAiService {
 
             System.out.println(promptResponse.getAnswerRelatedToCalendar());
             EventEntity eventEntity = promptResponse.getAnswerRelatedToCalendar();
-
-            return sendToTheCalenderService(eventEntity,promptResponse.getMethodToUse(),token);
+            if ( promptResponse.getAnswerRelatedToCalendar()==null || promptResponse.getAnswerRelatedToCalendar().getKeyword()==null)
+                return sendToTheCalenderService(eventEntity,promptResponse.getMethodToUse(),token,null);
+            return sendToTheCalenderService(eventEntity,promptResponse.getMethodToUse(),token,promptResponse.getAnswerRelatedToCalendar().getKeyword());
         } else if (promptResponse.getTypeAnswer().equals("message")) {
             return promptResponse.getAnswerText();
         }
-        return null;
+        throw new SomeThingWentWrongException("Something went wrong");
     }
 
 
     @Override
-    public GmailApiDto sendToTheGemailService(GmailApiDto gmailApiDto,String methodeToUse,String token) {
+    public GmailApiDto sendToTheGemailService(GmailApiDto gmailApiDto,String methodeToUse,String token) throws SomeThingWentWrongException {
             if (methodeToUse.equals("send")) {
+                System.out.println("*****************************");
                 gmailClient.sendEmail("Bearer " + token, gmailApiDto);
+                return gmailApiDto;
             }
-            return gmailApiDto;
+            throw new SomeThingWentWrongException("Something went wrong");
     }
     @Override
-    public Object sendToTheCalenderService(EventEntity eventEntity,String methodeToUse,String token) {
+    public Object sendToTheCalenderService(EventEntity eventEntity,String methodeToUse,String token,String keyword) throws SomeThingWentWrongException {
+            System.out.println("***********"+token);
         if (methodeToUse.equals("create")) {
             return calendarClient.setEvent("Bearer " + token, eventEntity);
         } else if (methodeToUse.equals("update")) {
             return calendarClient.updateEvent("Bearer " + token, eventEntity);
         } else if (methodeToUse.equals("delete")) {
             calendarClient.deleteEvent("Bearer " + token, eventEntity);
+            return eventEntity;
+        }
+        else if (methodeToUse.equals("searchByKeyword")) {
+           return calendarClient.searchEventsByKeyword("Bearer " + token, keyword);
+        }
+        else if (methodeToUse.equals("searchByDate")) {
+            System.out.println("***********"+keyword);
+           return calendarClient.searchEventsByDate("Bearer " + token, keyword);
         }
         else if (methodeToUse.equals("get")) {
             return calendarClient.getEvent("Bearer " + token);
         }
-            return eventEntity;
+            throw new SomeThingWentWrongException("Something went wrong");
+
     }
 
 

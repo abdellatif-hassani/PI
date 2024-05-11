@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Maven: org.apache.groovy:groovy-json:4.0.21" type="java-imported" external-system-id="Maven">
+    <properties groupId="org.apache.groovy" artifactId="groovy-json" version="4.0.21" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/groovy/groovy-json/4.0.21/groovy-json-4.0.21.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/groovy/groovy-json/4.0.21/groovy-json-4.0.21-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/groovy/groovy-json/4.0.21/groovy-json-4.0.21-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
