@@ -27,13 +27,15 @@ export class ApiService {
     );
   }
 
-  sendEmail(arg0: AnyResponse | undefined, token: any): Observable<any> {
+  sendEmail(reprompt: AnyResponse, token: any): Observable<any> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`
     });
+    reprompt.satisfied = true;
+    console.log('reprompt:', reprompt);
     console.log('authorization:', headers.get('Authorization'));
-    return this.http.post<any>(`${this.apiUrl}/email`, arg0, { headers }).pipe(
+    return this.http.post<any>(`${this.apiUrl}/reprompt`, reprompt, { headers }).pipe(
       catchError(error => {
         console.error('Error sending email:', error);
         throw error;

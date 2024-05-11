@@ -167,8 +167,8 @@ export class MessagesComponent implements OnInit{
   }
 
 
-  confirmEmail(arg0: AnyResponse|undefined) {
-    this.apiService.sendEmail(arg0, this.token).subscribe(
+  confirmEmail(reprompt: AnyResponse) {
+    this.apiService.sendEmail(reprompt, this.token).subscribe(
       response => {
         console.log('Email sent:', response);
         this.requestsAndResponses.push({ prompt: '', response: response, isUserPrompt: false });

@@ -50,7 +50,6 @@ public class OpenAiController {
     @PostMapping("/reprompt")
     public PromptResponse makeRePrompt(@RequestBody RePromptRequest rePromptRequest) throws JsonProcessingException {
          return  openAiService.getRePrompt(rePromptRequest.getPromptResponse(),rePromptRequest.getUserText(),PromptString.systemText_RePrompt);
-
     }
 
     //for executing the final response
