@@ -43,7 +43,7 @@ public class Controller {
         if(token==null)
             throw new CredentialNotFoundException("Token not found");
         token=token.substring(7);
-
+        System.out.println("Token***************: "+token);
         GmailServiceConfig gmailServiceConfig = applicationContext.getBean(GmailServiceConfig.class);
         Gmail gmailService = gmailServiceConfig.gmailService(new AccountCredential(token));
         emailService.setGmailService(gmailService);
