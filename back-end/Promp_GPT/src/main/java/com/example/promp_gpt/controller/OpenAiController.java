@@ -47,7 +47,7 @@ public class OpenAiController {
     public PromptResponse makeRePrompt(@RequestBody RePromptRequest rePromptRequest,HttpServletRequest httpServletRequest) throws JsonProcessingException, SomeThingWentWrongException {
         String BearerToken = httpServletRequest.getHeader("Authorization");
         String token = BearerToken.substring(7);
-        if (rePromptRequest.getPromptResponse().getSatisfied()) {
+        if (rePromptRequest.getPromptResponse().getSatisfied()!=null && rePromptRequest.getPromptResponse().getSatisfied()==true) {
             openAiService.sendToTheCorrectService(rePromptRequest.getPromptResponse(), token);
             return rePromptRequest.getPromptResponse();
         } else {
