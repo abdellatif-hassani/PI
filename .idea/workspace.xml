@@ -7,8 +7,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e5b9bf53-6775-45e4-991f-6f275a45acf7" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/back-end/Promp_GPT/src/main/java/com/example/promp_gpt/controller/OpenAiController.java" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/Promp_GPT/src/main/java/com/example/promp_gpt/controller/OpenAiController.java" afterDir="false" />
+    <list default="true" id="e5b9bf53-6775-45e4-991f-6f275a45acf7" name="Changes" comment="&quot;merge with webapp&quot;">
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,18 +25,33 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;abdeslammoukhliss&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="62c31bb5-4041-43ca-a3e0-cc8aa8be4e37" />
+        <option name="url" value="https://github.com/abdellatif-hassani/PI.git" />
+      </UrlAndAccount>
+    </option>
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="MavenImportPreferences">
-    <option name="generalSettings">
-      <MavenGeneralSettings>
-        <option name="useMavenConfig" value="true" />
-      </MavenGeneralSettings>
-    </option>
-  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 4
+}]]></component>
   <component name="ProjectId" id="2g0cxIlW6GYsXWDfqrJnUKlZauQ" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
@@ -54,7 +71,9 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
+    "dart.analysis.tool.window.visible": "false",
     "extract.method.default.visibility": "private",
+    "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "last_opened_file_path": "D:/Users/abderrazzak/Videos/Projects/Intelligent assistant/PI/back-end/Promp_GPT/src/main/resources",
     "node.js.detected.package.eslint": "true",
@@ -65,6 +84,7 @@
     "run.code.analysis.last.selected.profile": "pProject Default",
     "settings.editor.selected.configurable": "editor.preferences.appearance",
     "settings.editor.splitter.proportion": "0.23649338",
+    "show.migrate.to.gradle.popup": "false",
     "spring.configuration.checksum": "15e37bbb90404e59a4fe9a4149d59b0a",
     "vue.rearranger.settings.migration": "true"
   }
@@ -86,19 +106,6 @@
     </option>
   </component>
   <component name="RunManager" selected="Spring Boot.PrompGptApplication">
-    <configuration default="true" type="JetRunConfigurationType">
-      <module name="PI" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
-      <module name="PI" />
-      <option name="filePath" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="CalendarServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="calendar-service" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="pi.com.calendarservice.CalendarServiceApplication" />
@@ -149,7 +156,17 @@
       <workItem from="1714981858872" duration="347000" />
       <workItem from="1714987398576" duration="16497000" />
       <workItem from="1715037613280" duration="2398000" />
+      <workItem from="1715089691864" duration="647000" />
     </task>
+    <task id="LOCAL-00001" summary="&quot;merge with webapp&quot;">
+      <option name="closed" value="true" />
+      <created>1715089496018</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1715089496018</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -168,6 +185,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="&quot;merge with webapp&quot;" />
+    <option name="LAST_COMMIT_MESSAGE" value="&quot;merge with webapp&quot;" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

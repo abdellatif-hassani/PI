@@ -18,10 +18,10 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="GmailApi" options="-parameters" />
-      <module name="Promp_GPT" options="-parameters" />
+      <module name="Promp_GPT" options="" />
       <module name="calendar-service" options="-parameters" />
-      <module name="eurekaserver" options="-parameters" />
-      <module name="gateway" options="-parameters" />
+      <module name="eurekaserver" options="" />
+      <module name="gateway" options="" />
     </option>
   </component>
 </project>

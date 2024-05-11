@@ -113,7 +113,7 @@ class _ChatterScreenState extends State<ChatterScreen> {
           actions: <Widget>[
             PopupMenuButton<int>(
               itemBuilder: (context) => [
-                PopupMenuItem(
+                const PopupMenuItem(
                   value: 1,
                   child: Text("clear chat"),
                 ),
