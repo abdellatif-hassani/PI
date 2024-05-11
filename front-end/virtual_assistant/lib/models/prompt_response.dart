@@ -1,9 +1,11 @@
+import 'package:virtual_assistant/models/prompt_response_type.dart';
 import 'package:virtual_assistant/pages/chat_page.dart';
 
 import 'calendar_info.dart';
 import 'email_info.dart';
-class PromptResponse {
-  final String typeAnswer;
+import 'jsonable.dart';
+class PromptResponse extends Jsonable{
+  final PromptResponseType typeAnswer;
   final String answerText;
   final EmailInfo? answerRelatedToGmail;
   final CalendarInfo? answerRelatedToCalendar;
@@ -23,7 +25,7 @@ class PromptResponse {
 
   factory PromptResponse.fromJson(Map<String, dynamic> json) {
     return PromptResponse(
-      typeAnswer: json['typeAnswer'],
+      typeAnswer:  PromptResponseType.values.byName(json['typeAnswer']),
       answerText: json['answerText'],
       answerRelatedToGmail: json['answerRelatedToGmail'] != null
           ? EmailInfo.fromJson(json['answerRelatedToGmail'])
@@ -36,10 +38,10 @@ class PromptResponse {
       wantToCancel: json['wantToCancel'],
     );
   }
-
+@override
   Map<String, dynamic> toJson() {
     return {
-      'typeAnswer': typeAnswer,
+      'typeAnswer': PromptResponseType.values.indexOf(typeAnswer),
       'answerText': answerText,
       'answerRelatedToGmail': answerRelatedToGmail?.toJson(),
       'answerRelatedToCalendar':
@@ -49,8 +51,9 @@ class PromptResponse {
       'wantToCancel': wantToCancel,
     };
   }
-  String getPromptMessage() {
-    String messageText= answerText;
+  @override
+  String toString() {
+    String messageText= answerText+"\n";
     if(answerRelatedToCalendar != null) {
       messageText= "$messageText ${answerRelatedToCalendar!.toString()}";
     } else if(answerRelatedToGmail != null) {

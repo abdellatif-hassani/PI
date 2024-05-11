@@ -27,6 +27,6 @@ class EmailInfo {
   }
   @override
   String toString() {
-    return 'here is the email {to: $to, subject: $subject, message: $message}';
+    return '${String.fromCharCode(0x1F4EC)}: $to \n ${String.fromCharCode(0x1f3af)}: $subject \n ${String.fromCharCode(0X1f4ac)}: $message';
   }
 }
