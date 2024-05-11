@@ -52,7 +52,7 @@ public class OpenAiController {
             return rePromptRequest.getPromptResponse();
         } else {
             PromptResponse promptResponse = openAiService.getRePrompt(rePromptRequest.getPromptResponse(), rePromptRequest.getUserText(), PromptString.systemText_RePrompt);
-            if (promptResponse.getSatisfied()) openAiService.sendToTheCorrectService(promptResponse, token);
+            if (promptResponse.getSatisfied()==true) openAiService.sendToTheCorrectService(promptResponse, token);
             return promptResponse;
         }
     }
