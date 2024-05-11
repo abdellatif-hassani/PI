@@ -9,14 +9,12 @@
         <outputRelativeToContentRoot value="true" />
         <module name="eurekaserver" />
         <module name="calendar-service" />
+        <module name="Speech-to-Text-Service" />
         <module name="gateway" />
         <module name="GmailApi" />
         <module name="Promp_GPT" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="Speech-to-Text-Service" target="17" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
