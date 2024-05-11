@@ -11,4 +11,5 @@ public class EventEntity {
     private String description;
     private String startTime;
     private String endTime;
+    private String keyword;
 }

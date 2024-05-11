@@ -2,15 +2,27 @@ package com.example.promp_gpt.prompt;
 
 public class PromptString {
     public static final  String systemText_Prompt = """
-            we are building an chat application when the user asks to interact with his gmail like sending email for him or adding event to his calender or deleting or updating an event on the his calender or the user just ask a normal question the application should replay to it. our service receives user input and needs to generate responses based on the input.
-
-            Our service should be able to handle three types of responses:
-            1. If the user input is related to sending an email, the service should respond with the necessary information to send the email, including the sender, recipient, subject, message, and any attachments.
-            2. If the user input is related to creating, updating, or deleting a calendar event, the service should respond with the necessary information for the calendar event, including the summary, location, description, start time, and end time.
-            3. If the user input does not require interaction with email or calendar APIs, the service should simply return the text of the response message.
-
-            Your task is to generate a JSON object representing the response based on the user input. The JSON object should have the following structure:
-
+            Task Description:
+            Our application needs to generate responses based on user input. Depending on the input, the application should handle email operations, manage calendar events, or address general queries.
+                    
+            Response Requirements:
+            1. Email Interaction:
+               - If the input is related to sending an email, the response should include details like the recipient, subject, and message body.
+               - Example: "Please send an email to john@example.com with the subject 'Meeting Agenda.'"
+                    
+            2. Calendar Management:
+               - For calendar-related inputs, such as creating, updating, or deleting an event, the response should specify the event's summary, location, description, start time, and end time in the format YYYY-MM-DDTHH:mm+01:00.
+               - Example: "Can you add a meeting with John tomorrow at 10:00 AM?"
+                    
+            3. General Queries:
+               - If the input is a general question, the response should simply provide the relevant information or advice.
+               - Example: "How do I apply for a library card?"
+                    
+            Method Options:
+            - The methods to interact with emails and calendars include 'send', 'get', 'create', 'update', and 'delete'.
+                    
+            Guidelines:
+            - The response format should adjust based on the type of request. Avoid including unnecessary information not requested by the user.
             - If the `typeAnswer` is `email`, then `answerText` and `answerRelatedToGmail` should not exist.
             - If the `typeAnswer` is `calendar`, then `answerText` and `answerRelatedToCalendar` should not exist.
             - If the `typeAnswer` is `message`, then `answerRelatedToGmail` and `answerRelatedToCalendar` should not exist.
@@ -29,79 +41,23 @@ public class PromptString {
                     "description": "string",
                     "startTime": "you need to respect this format: YYYY-MM-DDTHH:mm+01:00 for example 2024-04-29T17:00:00+01:00",
                     "endTime": "you need to respect this format: YYYY-MM-DDTHH:mm+01:00 for example 2024-04-29T17:00:00+01:00"
+                    "keyword": "string to search if the user ask to search for an event by keyword or date if it's by date you need to respect this format: YYYY-MM-DD for example 2024-04-29"
               ,
-              "methodToUse": "send or get or create or update or delete"
+              "methodToUse": "send or get or create or update or delete or searchByDate or searchByKeyword",
              
              finally don't add any think that the user didn't ask for it.if there is no attachments don't mention it in the response.
              
              now here is the user input:
              {userText}
-             
-             now I will give you some examples :
-             if the userText is "Please send an email to john@example.com with the subject Meeting Agenda."
-             the response should be like this:
-                   "typeAnswer": "email",
-                    "answerText": null,
-                    "answerRelatedToGmail": 
-                         "to": "john@example.com",
-                          "subject": "Meeting Agenda",
-                           "message": null,
-                            ,
-                     "answerRelatedToCalendar": null,
-                     "methodToUse": "send"
-              if the userText is "Can you add a meeting with John for tomorrow at 10:00 AM?"
-              the response should be like this:
+              
+              example of userText:"get all the events in my calendar"
+               the response should be like this:
                 "typeAnswer": "calendar",
-                "answerText": null,
-                "answerRelatedToGmail": null,
-                "answerRelatedToCalendar": 
-                  "summary": "Meeting with John",
-                  "location": null,
-                  "description": null,
-                  "startTime": "2024-05-07T10:00:00+01:00",
-                  "endTime": "2024-05-07T11:00:00+01:00"
-                ,
-                "methodToUse": "create"
-                  if the userText is "How do I apply for a library card?"
-                  the response should be like this:
-                        "typeAnswer": "message",
-                         "answerText": "To apply for a library card, you will need to visit the library's circulation desk and fill out an application form. You may be required to provide proof of identity and address.",
-                if the userText is "I need to update the location of the team meeting to the conference room."
-                the response should be like this:
-                  "typeAnswer": "calendar",
-                  "answerText": null,
-                  "answerRelatedToGmail": null,
-                  "answerRelatedToCalendar": 
-                    "summary": "Team Meeting",
-                    "location": "Conference Room",
-                    "description": null,
-                    "startTime": null,
-                    "endTime": null
-                   ,
-                  "methodToUse": "update" 
-                if the userText is "How do I change my Wi-Fi password?"
-                  the response should be like this:
-                       "typeAnswer": "message",
-                        "answerText": "To change your Wi-Fi password, you will need to access your router's settings. Usually, you can do this by typing the router's IP address into a web browser and entering your login credentials. From there, you should be able to find the option to change the password.",
-                                                                                                                       
-                if the userText is "Cancel my appointment with the dentist on Friday."
-                the response should be like this:
-                   "typeAnswer": "calendar",
                    "answerText": null,
                    "answerRelatedToGmail": null,
-                   "answerRelatedToCalendar": 
-                     "summary": "Dentist Appointment",
-                     "location": null,
-                     "description": null,
-                     "startTime": "2024-05-10T14:00:00+01:00",
-                     "endTime": "2024-05-10T15:00:00+01:00"
-                    ,
-                   "methodToUse": "delete"
-                  if the userText is "Can you recommend a good Italian restaurant in the area?" 
-                  the response should be like this:
-                      "typeAnswer": "message",
-                       "answerText": "Yes, I recommend trying La Trattoria. They have excellent Italian cuisine."
-                               
+                   "answerRelatedToCalendar": null,
+                   "methodToUse": "get"
+                   
             """;
 
     public static final  String systemText_RePrompt ="""
@@ -138,8 +94,6 @@ public class PromptString {
               ,
               "methodToUse": "send or get or create or update or delete",
               "satisfied": "false or true",
-              "wantToCancel": "false or true"
-            
-                        
+              "wantToCancel": "false or true"        
             """;
 }

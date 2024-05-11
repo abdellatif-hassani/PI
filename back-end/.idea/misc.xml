@@ -7,6 +7,9 @@
         <option value="$PROJECT_DIR$/gateway/pom.xml" />
         <option value="$PROJECT_DIR$/eurekaserver/pom.xml" />
         <option value="$PROJECT_DIR$/Promp_GPT/pom.xml" />
+        <option value="$PROJECT_DIR$/gmail-service/pom.xml" />
+        <option value="$PROJECT_DIR$/calendar-service/pom.xml" />
+        <option value="$PROJECT_DIR$/Speech-to-Text-Service/pom.xml" />
       </list>
     </option>
   </component>

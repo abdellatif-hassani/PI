@@ -8,14 +8,20 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="eurekaserver" />
+        <module name="calendar-service" />
+        <module name="Speech-to-Text-Service" />
         <module name="gateway" />
+        <module name="GmailApi" />
         <module name="Promp_GPT" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="GmailApi" options="-parameters" />
       <module name="Promp_GPT" options="-parameters" />
+      <module name="Speech-to-Text-Service" options="-parameters" />
+      <module name="calendar-service" options="-parameters" />
       <module name="eurekaserver" options="-parameters" />
       <module name="gateway" options="-parameters" />
     </option>

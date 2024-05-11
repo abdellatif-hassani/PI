@@ -3,8 +3,14 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/Promp_GPT/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Promp_GPT/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Speech-to-Text-Service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Speech-to-Text-Service/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/calendar-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/calendar-service/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/eurekaserver/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/gateway/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/gateway/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/gmail-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/gmail-service/src/main/resources" charset="UTF-8" />
   </component>
 </project>
