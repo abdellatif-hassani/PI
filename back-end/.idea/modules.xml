@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/gmail-service/GmailApi.iml" filepath="$PROJECT_DIR$/gmail-service/GmailApi.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Promp_GPT/Promp_GPT.iml" filepath="$PROJECT_DIR$/Promp_GPT/Promp_GPT.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/back-end.iml" filepath="$PROJECT_DIR$/.idea/back-end.iml" />
-      <module fileurl="file://$PROJECT_DIR$/calendar-service/calendar-service.iml" filepath="$PROJECT_DIR$/calendar-service/calendar-service.iml" />
-      <module fileurl="file://$PROJECT_DIR$/eurekaserver/eurekaserver.iml" filepath="$PROJECT_DIR$/eurekaserver/eurekaserver.iml" />
-      <module fileurl="file://$PROJECT_DIR$/gateway/gateway.iml" filepath="$PROJECT_DIR$/gateway/gateway.iml" />
     </modules>
   </component>
 </project>

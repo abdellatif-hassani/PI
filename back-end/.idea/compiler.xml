@@ -4,12 +4,5 @@
     <annotationProcessing>
       <profile default="true" name="Default" enabled="true" />
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="calendar-service" target="21" />
-      <module name="eurekaserver" target="17" />
-      <module name="gateway" target="21" />
-      <module name="GmailApi" target="17" />
-      <module name="Promp_GPT" target="21" />
-    </bytecodeTargetLevel>
   </component>
 </project>
