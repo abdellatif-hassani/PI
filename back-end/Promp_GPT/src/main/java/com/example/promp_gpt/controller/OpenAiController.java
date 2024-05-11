@@ -40,7 +40,7 @@ public class OpenAiController {
     public PromptResponse makePrompt(@RequestBody String message) throws JsonProcessingException {
         PromptResponse promptResponse =openAiService.getPrompt(message, PromptString.systemText_Prompt);
         System.out.println("****************"+promptResponse);
-       return promptResponse;
+        return promptResponse;
     }
 
     @PostMapping("/reprompt")

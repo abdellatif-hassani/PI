@@ -3,8 +3,11 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/Promp_GPT/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Promp_GPT/src/main/resources" charset="UTF-8" />
+<<<<<<< HEAD
+=======
     <file url="file://$PROJECT_DIR$/Speech-to-Text-Service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Speech-to-Text-Service/src/main/resources" charset="UTF-8" />
+>>>>>>> 27f48204f2a2c53cf8bf0195952b3d4f02060fc1
     <file url="file://$PROJECT_DIR$/calendar-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/calendar-service/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/eurekaserver/src/main/java" charset="UTF-8" />

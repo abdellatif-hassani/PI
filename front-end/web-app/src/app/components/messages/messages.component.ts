@@ -1,6 +1,11 @@
 import { Component, ElementRef, ViewChild, OnInit } from '@angular/core';
 import { AuthGoogleService } from '../../services/auth-google.service';
 import { ApiService } from '../../services/api.service';
+import { AnyResponse, MessageResponse, EmailDetails
+, EmailResponse, CalendarDetails, CalendarResponse
+ } from '../../models/response-types';
+ import { isMessageResponse, isEmailResponse, isCalendarResponse } from '../../helpers/response-type-guards';
+
 
 @Component({
   selector: 'app-messages',
@@ -8,7 +13,8 @@ import { ApiService } from '../../services/api.service';
   styleUrls: ['./messages.component.css']
 })
 export class MessagesComponent implements OnInit{
-  requestsAndResponses: { prompt: string, response: any, isUserPrompt: boolean }[] = [];
+
+  requestsAndResponses: { prompt: string, response: AnyResponse, isUserPrompt: boolean }[] = [];
   prompt: string = '';
   token: any = '';
   user: any = '';
@@ -23,48 +29,158 @@ export class MessagesComponent implements OnInit{
     private apiService: ApiService
   ) {
     this.requestsAndResponses = [
-      { prompt: 'What is the capital of France?', response: 'Paris', isUserPrompt: false },
-      { prompt: 'What is the capital of Spain?', response: 'Madrid', isUserPrompt: false },
-      { prompt: 'What is the capital of Italy?', response: 'Rome', isUserPrompt: false },
-      { prompt: 'What is the capital of Germany?', response: 'Berlin', isUserPrompt: false },
-      { prompt: 'What is the capital of the United States?', response: 'Washington D.C.', isUserPrompt: false },
-      { prompt: 'What is the capital of Canada?', response: 'Ottawa', isUserPrompt: false },
-      { prompt: 'What is the capital of Mexico?', response: 'Mexico City', isUserPrompt: false },
-      { prompt: 'What is the capital of Brazil?', response: 'Brasília', isUserPrompt: false },
-      { prompt: 'What is the capital of Argentina?', response: 'Buenos Aires', isUserPrompt: false },
-      { prompt: 'What is the capital of Australia?', response: 'Canberra', isUserPrompt: false }
+      {
+        prompt: 'Hello',
+        response: {
+          typeAnswer: 'message',
+          methodToUse: 'message',
+          satisfied: true,
+          answerText: 'Hi, how can I help you?'
+        },
+        isUserPrompt: true
+      },
+      {
+        prompt: 'I would like to schedule a meeting',
+        response: {
+          typeAnswer: 'calendar',
+          methodToUse: 'calendar',
+          satisfied: true,
+          answerRelatedToCalendar: {
+            description: 'Meeting with John Doe',
+            startTime: '2021-08-01T09:00:00',
+            endTime: '2021-08-01T10:00:00',
+            location: 'Office',
+            summary: 'Meeting'
+          }
+        },
+        isUserPrompt: true
+      },
+      //mail
+      {
+        prompt: 'Send an email to John Doe',
+        response: {
+          typeAnswer: 'email',
+          methodToUse: 'send',
+          satisfied: true,
+          answerRelatedToGmail: {
+            to: 'sasbo@gmail.com',
+            subject: 'Meeting',
+            message: 'Hi John, let\'s meet tomorrow at 10am.'
+          }
+        },
+        isUserPrompt: true
+      }
     ];
   }
 
   sendRequest() {
-    // Check if prompt is empty
-    if (!this.prompt.trim()) {
-      console.error('Prompt cannot be empty');
-      return;
-    }
-
-    // Retrieve token
-    this.token = this.authService.getToken();
-
-    // Send request to backend
-    this.apiService.sendRequest(this.prompt, this.token).subscribe(
-      response => {
-        console.log('Response:', response);
-        // Store the request and response
-        this.requestsAndResponses.push({ prompt: this.prompt, response: response.answerText, isUserPrompt: true });
-        // Clear the prompt
-        this.prompt = '';
-      },
-      error => {
-        console.error('Error:', error);
-        // Handle error as needed
+      if (!this.prompt.trim()) {
+        console.error('Prompt cannot be empty');
+        return;
       }
-    );
+    
+      this.token = this.authService.getToken();
+    
+      this.apiService.sendRequest(this.prompt, this.token).subscribe(
+        response => {
+          let formattedResponse: AnyResponse;
+    
+          // Determine the type of response and format accordingly
+          if (isMessageResponse(response)) {
+            formattedResponse = {
+              typeAnswer: 'message',
+              methodToUse: response.methodToUse,
+              satisfied: response.satisfied,
+              wantToCancel: response.wantToCancel,
+              answerText: response.answerText
+            };
+          } else if (isEmailResponse(response)) {
+            formattedResponse = {
+              typeAnswer: 'email',
+              methodToUse: response.methodToUse,
+              satisfied: response.satisfied,
+              wantToCancel: response.wantToCancel,
+              answerRelatedToGmail: {
+                to: response.answerRelatedToGmail.to,
+                subject: response.answerRelatedToGmail.subject,
+                message: response.answerRelatedToGmail.message,
+                attachments: response.answerRelatedToGmail.attachments
+              }
+            };
+          } else if (isCalendarResponse(response)) {
+            formattedResponse = {
+              typeAnswer: 'calendar',
+              methodToUse: response.methodToUse,
+              satisfied: response.satisfied,
+              wantToCancel: response.wantToCancel,
+              answerRelatedToCalendar: {
+                description: response.answerRelatedToCalendar.description,
+                startTime: response.answerRelatedToCalendar.startTime,
+                endTime: response.answerRelatedToCalendar.endTime,
+                location: response.answerRelatedToCalendar.location,
+                summary: response.answerRelatedToCalendar.summary
+              }
+            };
+          } else {
+            // Handle unexpected response types or errors
+            console.error('Unexpected response type:', response);
+            return;
+          }
+    
+          // Store the formatted response
+          console.log('Response:', formattedResponse);
+          this.requestsAndResponses.push({ prompt: this.prompt, response: formattedResponse, isUserPrompt: true });
+          this.prompt = '';
+          this.scrollToBottom();
+        },
+        error => {
+          console.error('Error:', error);
+        }
+      );
   }
 
   @ViewChild('messagesContainer') messagesContainer!: ElementRef;
   scrollToBottom() {
     this.messagesContainer.nativeElement.scrollTop = this.messagesContainer.nativeElement.scrollHeight;
   }
+
+  
+  getMessageResponse(response: AnyResponse): MessageResponse | null {
+    if (response.typeAnswer === 'message') {
+      return response as MessageResponse;
+    }
+    return null;
+  }
+
+  getEmailResponse(response: AnyResponse): EmailResponse | null {
+    if (response.typeAnswer === 'email') {
+      return response as EmailResponse;
+    }
+    return null;
+  }
+
+  getCalendarResponse(response: AnyResponse): CalendarResponse | null {
+    if (response.typeAnswer === 'calendar') {
+      return response as CalendarResponse;
+    }
+    return null;
+  }
+
+
+  confirmEmail(reprompt: AnyResponse) {
+    this.apiService.sendEmail(reprompt, this.token).subscribe(
+      response => {
+        console.log('Email sent:', response);
+        this.requestsAndResponses.push({ prompt: '', response: response, isUserPrompt: false });
+        this.scrollToBottom();
+      },
+      error => {
+        console.error('Error sending email:', error);
+      }
+    );
+  }
+
+
+
   
 }
