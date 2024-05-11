@@ -5,12 +5,25 @@
     </mat-card-header>
     <mat-card-content>
         <div class="messages" #messagesContainer>
-            <div *ngFor="let requestResponse of requestsAndResponses">
-              <p [ngClass]="{'user-prompt': requestResponse.isUserPrompt, 'assistant-response': !requestResponse.isUserPrompt}">
-                <strong>{{ requestResponse.isUserPrompt ? user?.name : 'Assistant' }}:</strong> {{ requestResponse.prompt }}
+            <div *ngFor="let rr of requestsAndResponses">
+              <p [ngClass]="{'user-prompt': rr.isUserPrompt, 'assistant-response': !rr.isUserPrompt}">
+                <strong>{{ rr.isUserPrompt ? user?.name : 'Assistant' }}:</strong> {{ rr.prompt }}
               </p>
-              <p [ngClass]="{'assistant-response': requestResponse.isUserPrompt, 'user-prompt': !requestResponse.isUserPrompt}">
-                <strong>{{ requestResponse.isUserPrompt ? 'Assistant' : user?.name }}:</strong> {{ requestResponse.response }}
+              <p [ngClass]="{'assistant-response': rr.isUserPrompt, 'user-prompt': !rr.isUserPrompt}">
+                <strong>{{ rr.isUserPrompt ? 'Assistant' : user?.name }}:</strong>
+                 <ng-container *ngIf="getMessageResponse(rr.response)">
+                  <p>{{ getMessageResponse(rr.response)?.answerText }}</p>
+                </ng-container>
+                <ng-container *ngIf="getEmailResponse(rr.response)">
+                  <p><strong>Verify mail to send</strong></p>
+                  <p><strong>To:</strong> {{ getEmailResponse(rr.response)?.answerRelatedToGmail!.to }}</p>
+                  <p><strong>Subject:</strong> {{ getEmailResponse(rr.response)?.answerRelatedToGmail!.subject }}</p>
+                  <p><strong>Message:</strong> {{ getEmailResponse(rr.response)?.answerRelatedToGmail!.message }}</p>
+                  <button mat-raised-button color="primary"
+                     (click)="confirmEmail(rr.response)">
+                    Confirm Sending
+                  </button>
+                </ng-container>
               </p>
             </div>
         </div>
