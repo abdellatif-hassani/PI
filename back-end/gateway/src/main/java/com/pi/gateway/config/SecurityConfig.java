@@ -31,8 +31,7 @@ public class SecurityConfig {
 
         http.authorizeExchange(
                 exchanges -> exchanges
-                        .pathMatchers("/c").permitAll()
-                        .anyExchange().permitAll()
+                        .anyExchange().authenticated()
                 )
 
              .oauth2ResourceServer(c -> c.opaqueToken(Customizer.withDefaults()));
