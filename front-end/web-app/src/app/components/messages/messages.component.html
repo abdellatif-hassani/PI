@@ -1,29 +1,59 @@
 <mat-card class="profile-card">
     <mat-card-header>
-        <mat-card-title>Assistant MNH.1.0</mat-card-title>
-        <mat-card-subtitle>Send your request</mat-card-subtitle>
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div>
+                <mat-card-title>Assistant MNH.1.0</mat-card-title>
+                <mat-card-subtitle>Send your request</mat-card-subtitle>
+            </div>
+            <button mat-button (click)="deleteHistory()" class="delete-history-btn">
+                <mat-icon>delete_outline</mat-icon>
+                Delete History
+            </button>
+        </div>
     </mat-card-header>
     <mat-card-content>
         <div class="messages" #messagesContainer>
             <div *ngFor="let rr of requestsAndResponses">
-              <p [ngClass]="{'user-prompt': rr.isUserPrompt, 'assistant-response': !rr.isUserPrompt}">
-                <strong>{{ rr.isUserPrompt ? user?.name : 'Assistant' }}:</strong> {{ rr.prompt }}
+              <!-- user prompt -->
+              <p class="user-prompt" [ngClass]="{
+               'empty-prompt': !rr.prompt}">
+                <strong>{{user?.name }}:</strong> {{ rr.prompt }}
               </p>
-              <p [ngClass]="{'assistant-response': rr.isUserPrompt, 'user-prompt': !rr.isUserPrompt}">
-                <strong>{{ rr.isUserPrompt ? 'Assistant' : user?.name }}:</strong>
+              <!-- assistant prompt -->
+              <p class="assistant-response">
+                <strong>Assistant:</strong>
                  <ng-container *ngIf="getMessageResponse(rr.response)">
                   <p>{{ getMessageResponse(rr.response)?.answerText }}</p>
                 </ng-container>
                 <ng-container *ngIf="getEmailResponse(rr.response)">
-                  <p><strong>Verify mail to send</strong></p>
-                  <p><strong>To:</strong> {{ getEmailResponse(rr.response)?.answerRelatedToGmail!.to }}</p>
-                  <p><strong>Subject:</strong> {{ getEmailResponse(rr.response)?.answerRelatedToGmail!.subject }}</p>
-                  <p><strong>Message:</strong> {{ getEmailResponse(rr.response)?.answerRelatedToGmail!.message }}</p>
-                  <button mat-raised-button color="primary"
-                     (click)="confirmEmail(rr.response)">
-                    Confirm Sending
-                  </button>
+                   <!-- Check if the email has been sent (satisfied is true) -->
+                  <ng-container *ngIf="rr.response.satisfied; else emailDetails">
+                    <p>Email is sent successfully!</p>
+                  </ng-container>
+                  
+                  <!-- Template for displaying email details if not yet sent -->
+                  <ng-template #emailDetails>
+                    <p *ngIf="rr.isEmailBeingSent"><strong>Verify mail to send:</strong></p>
+                    <p *ngIf="rr.isEmailBeingSent">(This mail is sent ...)</p>
+                    <p><strong>To:</strong> {{ getEmailResponse(rr.response)?.answerRelatedToGmail!.to }}</p>
+                    <p><strong>Subject:</strong> {{ getEmailResponse(rr.response)?.answerRelatedToGmail!.subject }}</p>
+                    <p><strong>Message:</strong> {{ getEmailResponse(rr.response)?.answerRelatedToGmail!.message }}</p>
+                    <button mat-raised-button color="primary"
+                      (click)="confirmEmail((rr.response))" *ngIf="!rr.isEmailBeingSent">
+                      Confirm Sending {{rr.isEmailBeingSent}}
+                    </button>
+                  </ng-template>
                 </ng-container>
+
+                <ng-container *ngIf="getCalendarResponse(rr.response)">
+                  <p><strong>Summary:</strong> {{ getCalendarResponse(rr.response)?.answerRelatedToCalendar!.summary }}</p>
+                  <p><strong>Location:</strong> {{ getCalendarResponse(rr.response)?.answerRelatedToCalendar!.location }}</p>
+                  <p><strong>Start Time:</strong> {{ getCalendarResponse(rr.response)?.answerRelatedToCalendar!.startTime }}</p>
+                  <p><strong>End Time:</strong> {{ getCalendarResponse(rr.response)?.answerRelatedToCalendar!.endTime }}</p>
+                  <button mat-raised-button color="primary">Add to Calendar</button>
+                </ng-container>
+
+
               </p>
             </div>
         </div>
@@ -31,12 +61,13 @@
             arrow_drop_down_circle
         </mat-icon>
         <div class="chat-content">
-            <mat-form-field class="chat-input">
-                <textarea matInput placeholder="Type a message" [(ngModel)]="prompt"></textarea>
-            </mat-form-field>
-            <button mat-raised-button color="primary" 
-            (click)="sendRequest()" class="send-btn">Send</button>
-         </div>
+          <mat-form-field class="chat-input">
+              <textarea matInput placeholder="Type a message" [(ngModel)]="prompt"></textarea>
+          </mat-form-field>
+          <button mat-icon-button (click)="sendRequest()" class="send-btn">
+              <mat-icon>send</mat-icon>
+          </button>
+        </div>
     </mat-card-content>  
 </mat-card>
   

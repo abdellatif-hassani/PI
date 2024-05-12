@@ -9,7 +9,7 @@ import { AnyResponse, RePromptRequest } from '../models/response-types';
 })
 export class ApiService {
   
-  private apiUrl = 'http://localhost:9000'; 
+  private apiUrl = 'http://localhost:9090/prompt_service'; 
 
   constructor(private http: HttpClient) {}
 
@@ -21,7 +21,7 @@ export class ApiService {
     const body = { prompt }; // Assuming the backend expects an object
     console.log('body:', body);
     console.log(JSON.stringify(body));
-    return this.http.post<any>(`${this.apiUrl}`, JSON.stringify(body), { headers }).pipe(
+    return this.http.post<any>(`${this.apiUrl}/prompt`, JSON.stringify(body), { headers }).pipe(
       catchError(error => {
         console.error('Error sending request:', error);
         throw error;

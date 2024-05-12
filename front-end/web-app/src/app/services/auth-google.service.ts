@@ -30,6 +30,7 @@ export class AuthGoogleService {
       console.log('************Discovery Document loaded:', this.oAuthService.discoveryDocumentLoaded$)
       if (this.oAuthService.hasValidAccessToken()) {
         this.storeToken(this.oAuthService.getAccessToken());
+        this.oAuthService.setupAutomaticSilentRefresh();
       }
       console.log('Logged in:', this.oAuthService.hasValidAccessToken());
       console.log('Access Token:', this.oAuthService.getAccessToken());
@@ -50,6 +51,7 @@ export class AuthGoogleService {
     this.oAuthService.revokeTokenAndLogout();
     this.oAuthService.logOut();
     this.clearToken(); 
+    this.clearMessages();
     this.router.navigate(['/login']); 
   }
 
@@ -67,6 +69,10 @@ export class AuthGoogleService {
 
   getProfile() {
     return this.oAuthService.getIdentityClaims();
+  }
+
+  private clearMessages() {
+    localStorage.removeItem('requestsAndResponses');
   }
 
   private startTokenRefreshTimer() {

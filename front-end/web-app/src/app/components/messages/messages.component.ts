@@ -14,13 +14,14 @@ import { AnyResponse, MessageResponse, EmailDetails, PromptResponse
 })
 export class MessagesComponent implements OnInit{
 
-  requestsAndResponses: { prompt: string, response: AnyResponse, isUserPrompt: boolean }[] = [];
+  requestsAndResponses: { prompt: string, response: AnyResponse, isEmailBeingSent?: boolean }[] = [];
   prompt: string = '';
   token: any = '';
   user: any = '';
 
   
   ngOnInit(): void {
+    this.loadMessages();
     this.user = this.authService.getProfile();
   }
 
@@ -30,14 +31,28 @@ export class MessagesComponent implements OnInit{
   ) {
     this.requestsAndResponses = [
       {
-        prompt: 'Hello',
+        prompt: '',
         response: {
           typeAnswer: 'message',
           methodToUse: 'message',
           satisfied: true,
           answerText: 'Hi, how can I help you?'
         },
-        isUserPrompt: true
+      },
+      //mail
+      {
+        prompt: 'Send an email to John Doe',
+        response: {
+          typeAnswer: 'email',
+          methodToUse: 'send',
+          satisfied: false,
+          answerRelatedToGmail: {
+            to: 'sasbo@gmail.com',
+            subject: 'Meeting',
+            message: 'Hi John, let\'s meet tomorrow at 10am.'
+          }
+        },
+        isEmailBeingSent: true
       },
       {
         prompt: 'I would like to schedule a meeting',
@@ -53,7 +68,6 @@ export class MessagesComponent implements OnInit{
             summary: 'Meeting'
           }
         },
-        isUserPrompt: true
       },
       //mail
       {
@@ -61,14 +75,14 @@ export class MessagesComponent implements OnInit{
         response: {
           typeAnswer: 'email',
           methodToUse: 'send',
-          satisfied: true,
+          satisfied: false,
           answerRelatedToGmail: {
             to: 'sasbo@gmail.com',
             subject: 'Meeting',
             message: 'Hi John, let\'s meet tomorrow at 10am.'
           }
         },
-        isUserPrompt: true
+        isEmailBeingSent: true
       }
     ];
   }
@@ -129,7 +143,8 @@ export class MessagesComponent implements OnInit{
     
           // Store the formatted response
           console.log('Response:', formattedResponse);
-          this.requestsAndResponses.push({ prompt: this.prompt, response: formattedResponse, isUserPrompt: true });
+          this.requestsAndResponses.push({ prompt: this.prompt, response: formattedResponse });
+          this.saveMessages();
           this.prompt = '';
           this.scrollToBottom();
         },
@@ -139,9 +154,58 @@ export class MessagesComponent implements OnInit{
       );
   }
 
+
+
+  confirmEmail(response: AnyResponse) {
+    if (isEmailResponse(response)) {
+      const promptResponse: PromptResponse = {
+        ...response,
+        typeAnswer: response.typeAnswer,
+        methodToUse: response.methodToUse,
+        satisfied: response.satisfied,
+        wantToCancel: response.wantToCancel,
+        answerRelatedToGmail: response.answerRelatedToGmail
+      };
+  
+      const rePromptRequest: RePromptRequest = {
+        promptResponse: promptResponse,
+        userText: "Please confirm sending this email"
+      };
+  
+      console.log('Sending email:', rePromptRequest);
+      this.apiService.sendEmail(rePromptRequest, this.token).subscribe(
+        response => {
+          console.log('Email sent:', response);
+          this.requestsAndResponses.push({ prompt: '', response: response, isEmailBeingSent: true});
+          this.saveMessages();
+          this.loadMessages();
+          console.log('Requests and responses:', this.requestsAndResponses);
+          this.scrollToBottom();
+        },
+        error => {
+          console.error('Error sending email:', error);
+        }
+      );
+    } else {
+      console.error('Provided response is not an email response:', response);
+    }
+  }
+
+
   @ViewChild('messagesContainer') messagesContainer!: ElementRef;
   scrollToBottom() {
     this.messagesContainer.nativeElement.scrollTop = this.messagesContainer.nativeElement.scrollHeight;
+  }
+
+  saveMessages() {
+    localStorage.setItem('requestsAndResponses', JSON.stringify(this.requestsAndResponses));
+  }
+
+  loadMessages() {
+    const data = localStorage.getItem('requestsAndResponses');
+    if (data) {
+      this.requestsAndResponses = JSON.parse(data);
+    }
   }
 
   
@@ -166,40 +230,10 @@ export class MessagesComponent implements OnInit{
     return null;
   }
 
-
-  confirmEmail(response: AnyResponse) {
-    if (isEmailResponse(response)) {
-      const promptResponse: PromptResponse = {
-        ...response,
-        typeAnswer: response.typeAnswer,
-        methodToUse: response.methodToUse,
-        satisfied: response.satisfied,
-        wantToCancel: response.wantToCancel,
-        answerRelatedToGmail: response.answerRelatedToGmail
-      };
-  
-      const rePromptRequest: RePromptRequest = {
-        promptResponse: promptResponse,
-        userText: "Please confirm sending this email"
-      };
-  
-      console.log('Sending email:', rePromptRequest);
-      this.apiService.sendEmail(rePromptRequest, this.token).subscribe(
-        response => {
-          console.log('Email sent:', response);
-          this.requestsAndResponses.push({ prompt: '', response: response, isUserPrompt: false });
-          this.scrollToBottom();
-        },
-        error => {
-          console.error('Error sending email:', error);
-        }
-      );
-    } else {
-      console.error('Provided response is not an email response:', response);
-    }
+  deleteHistory() {
+    localStorage.removeItem('requestsAndResponses');
+    this.requestsAndResponses = [];
   }
-
-
 
   
 }

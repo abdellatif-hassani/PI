@@ -19,7 +19,7 @@ export class TestLoginComponent implements OnInit{
       this.authService.initConfiguration();
       setTimeout(() => {
           this.router.navigate(['/dashboard']);
-      }, 300); 
+      }, 500); 
          
     }
     
