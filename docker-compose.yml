@@ -1,0 +1,55 @@
+version: '3.8'
+services:
+  eurekaserver:
+    build: ./back-end/eurekaserver
+    ports:
+      - "8761:8761"
+
+  gateway:
+    build: ./back-end/gateway
+    ports:
+      - "9090:9090"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8761/eureka
+    depends_on:
+      - eurekaserver
+
+  gpt_server:
+    build: ./back-end/Promp_GPT
+    ports:
+      - "8000:8000"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8761/eureka
+    depends_on:
+      - eurekaserver
+
+  gmail_server:
+    build: ./back-end/gmail-service
+    ports:
+      - "8080:8080"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8761/eureka
+    depends_on:
+      - eurekaserver
+
+  calendar_service:
+    build: ./back-end/calendar-service
+    ports:
+      - "9000:9000"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8761/eureka
+    depends_on:
+      - eurekaserver
+
+  frontend:
+    build: ./front-end/web-app
+    ports:
+      - "4200:80"
+    depends_on:
+      - gateway
+
+networks:
+  default:
+      name: pi-network
+      external: true
+
