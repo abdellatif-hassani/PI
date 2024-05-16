@@ -22,9 +22,11 @@ import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -113,29 +115,37 @@ public class OpenAiServiceImpl implements OpenAiService {
             throw new SomeThingWentWrongException("Something went wrong");
     }
     @Override
-    public Object sendToTheCalenderService(EventEntity eventEntity,String methodeToUse,String token,String keyword) throws SomeThingWentWrongException {
-            System.out.println("***********"+token);
-        if (methodeToUse.equals("create")) {
-            return calendarClient.setEvent("Bearer " + token, eventEntity);
-        } else if (methodeToUse.equals("update")) {
-            return calendarClient.updateEvent("Bearer " + token, eventEntity);
-        } else if (methodeToUse.equals("delete")) {
-            calendarClient.deleteEvent("Bearer " + token, eventEntity);
-            return eventEntity;
-        }
-        else if (methodeToUse.equals("searchByKeyword")) {
-           return calendarClient.searchEventsByKeyword("Bearer " + token, keyword);
-        }
-        else if (methodeToUse.equals("searchByDate")) {
-            System.out.println("***********"+keyword);
-           return calendarClient.searchEventsByDate("Bearer " + token, keyword);
-        }
-        else if (methodeToUse.equals("get")) {
-            return calendarClient.getEvent("Bearer " + token);
-        }
-            throw new SomeThingWentWrongException("Something went wrong");
+    public Object sendToTheCalenderService(EventEntity eventEntity,String methodToUse,String token,String keyword) throws SomeThingWentWrongException{
+            System.out.println("***********" + token);
 
-    }
+            // Define the date format
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmXXX");
+
+            // Get the current date and time
+            String now = dateFormat.format(new Date());
+
+            if (methodToUse.equals("create")) {
+                if (eventEntity.getStartTime() == null) {
+                    eventEntity.setStartTime(now);
+                }
+                if (eventEntity.getEndTime() == null) {
+                    eventEntity.setEndTime(now);
+                }
+                return calendarClient.setEvent("Bearer " + token, eventEntity);
+            } else if (methodToUse.equals("delete")) {
+                calendarClient.deleteEvent("Bearer " + token, eventEntity);
+                return eventEntity;
+            } else if (methodToUse.equals("searchByKeyword")) {
+                return calendarClient.searchEventsByKeyword("Bearer " + token, keyword);
+            } else if (methodToUse.equals("searchByDate")) {
+                System.out.println("***********" + keyword);
+                return calendarClient.searchEventsByDate("Bearer " + token, keyword);
+            } else if (methodToUse.equals("get")) {
+                return calendarClient.getEvent("Bearer " + token);
+            }
+
+            throw new SomeThingWentWrongException("Something went wrong");
+        }
 
 
 }

@@ -24,6 +24,8 @@ public class OpenAiController {
     public PromptResponse makePrompt(@RequestBody String message) throws JsonProcessingException {
         PromptResponse promptResponse =openAiService.getPrompt(message, PromptString.systemText_Prompt);
         System.out.println("****************"+promptResponse);
+        promptResponse.setSatisfied(false);
+        promptResponse.setWantToCancel(false);
         return promptResponse;
     }
 
@@ -35,8 +37,17 @@ public class OpenAiController {
             openAiService.sendToTheCorrectService(rePromptRequest.getPromptResponse(), token);
             return rePromptRequest.getPromptResponse();
         } else {
-            PromptResponse promptResponse = openAiService.getRePrompt(rePromptRequest.getPromptResponse(), rePromptRequest.getUserText(), PromptString.systemText_RePrompt);
-            if (promptResponse.getSatisfied()==true) openAiService.sendToTheCorrectService(promptResponse, token);
+            PromptResponse promptResponse = null;
+            if (rePromptRequest.getPromptResponse().getTypeAnswer().equals("gmail"))
+            {
+                promptResponse= openAiService.getRePrompt(rePromptRequest.getPromptResponse(), rePromptRequest.getUserText(), PromptString.systemText_RePrompt_Gmail);
+            }
+            else if (rePromptRequest.getPromptResponse().getTypeAnswer().equals("calendar"))
+            {
+                promptResponse= openAiService.getRePrompt(rePromptRequest.getPromptResponse(), rePromptRequest.getUserText(), PromptString.systemText_RePrompt_Calendar);
+            }
+
+            if (promptResponse!=null && promptResponse.getSatisfied()==true) openAiService.sendToTheCorrectService(promptResponse, token);
             return promptResponse;
         }
     }
