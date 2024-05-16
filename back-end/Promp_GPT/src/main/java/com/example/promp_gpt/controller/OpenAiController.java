@@ -38,7 +38,7 @@ public class OpenAiController {
             return rePromptRequest.getPromptResponse();
         } else {
             PromptResponse promptResponse = null;
-            if (rePromptRequest.getPromptResponse().getTypeAnswer().equals("gmail"))
+            if (rePromptRequest.getPromptResponse().getTypeAnswer().equals("email"))
             {
                 promptResponse= openAiService.getRePrompt(rePromptRequest.getPromptResponse(), rePromptRequest.getUserText(), PromptString.systemText_RePrompt_Gmail);
             }
