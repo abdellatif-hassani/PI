@@ -29,10 +29,14 @@ public class OpenAiController {
         System.out.println("************************************test********************************************");
         promptResponse.setSatisfied(false);
         promptResponse.setWantToCancel(false);
-        if (promptResponse.getMethodToUse().equals("searchByKeyword") || promptResponse.getMethodToUse().equals("searchByDate") || promptResponse.getMethodToUse().equals("get")|| promptResponse.getMethodToUse().equals("delete"))
-        {
-           return openAiService.sendToTheCorrectService(promptResponse, token);
+        if (promptResponse.getMethodToUse()!=null ){
+            if (promptResponse.getSatisfied().equals("calendar") &&
+                    (promptResponse.getMethodToUse().equals("searchByKeyword") || promptResponse.getMethodToUse().equals("searchByDate") || promptResponse.getMethodToUse().equals("get")|| promptResponse.getMethodToUse().equals("delete")))
+            {
+                return openAiService.sendToTheCorrectService(promptResponse, token);
+            }
         }
+
         return promptResponse;
     }
 
