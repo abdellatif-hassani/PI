@@ -95,6 +95,7 @@ public class OpenAiServiceImpl implements OpenAiService {
             System.out.println(promptResponse.getAnswerRelatedToCalendar());
             EventEntity eventEntity = promptResponse.getAnswerRelatedToCalendar();
             if ( promptResponse.getAnswerRelatedToCalendar()==null || promptResponse.getAnswerRelatedToCalendar().getKeyword()==null)
+
                 return sendToTheCalenderService(eventEntity,promptResponse.getMethodToUse(),token,null);
             return sendToTheCalenderService(eventEntity,promptResponse.getMethodToUse(),token,promptResponse.getAnswerRelatedToCalendar().getKeyword());
         } else if (promptResponse.getTypeAnswer().equals("message")) {
@@ -151,10 +152,13 @@ public class OpenAiServiceImpl implements OpenAiService {
                 }
                 System.out.println("***********" + eventEntity);
                 execute = calendarClient.setEvent("Bearer " + token, eventEntity);
-            } else if (methodToUse.equals("delete")) {
-                return calendarClient.deleteEvent("Bearer " + token, eventEntity.getKeyword());
+            } else if (methodToUse.equals("deleteByKeyword")) {
+                return calendarClient.deleteEventBySummary("Bearer " + token, eventEntity.getKeyword());
 
-            } else if (methodToUse.equals("searchByKeyword")) {
+            } else if (methodToUse.equals("deleteByDate")) {
+                return calendarClient.deleteEventByDate("Bearer " + token, eventEntity.getKeyword());
+            }
+            else if (methodToUse.equals("searchByKeyword")) {
                  execute = calendarClient.searchEventsByKeyword("Bearer " + token, keyword);
 
             } else if (methodToUse.equals("searchByDate")) {

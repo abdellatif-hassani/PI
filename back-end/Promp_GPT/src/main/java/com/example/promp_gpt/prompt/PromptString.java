@@ -43,7 +43,7 @@ public class PromptString {
                     "endTime": "you need to respect this format: YYYY-MM-DDTHH:mm+01:00 for example 2024-04-29T17:00:00+01:00"
                     "keyword": "string to search if the user ask to search for an event by keyword or date if it's by date you need to respect this format: YYYY-MM-DD for example 2024-04-29 or string to delte if the user ask to delete for an event by keyword "
               ,
-              "methodToUse": "send or get or create or delete or searchByDate or searchByKeyword",
+              "methodToUse": "send or get or create or searchByDate or searchByKeyword or deleteByKeyword or deleteByDate",
              
              finally don't add any think that the user didn't ask for it.if there is no attachments don't mention it in the response.
              

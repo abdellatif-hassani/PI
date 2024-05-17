@@ -2,6 +2,9 @@ package com.example.promp_gpt.entities;
 
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter @Setter
 @NoArgsConstructor
 public class PromptResponse {
@@ -9,6 +12,7 @@ public class PromptResponse {
     private String answerText;
     private GmailApiDto answerRelatedToGmail;
     private EventEntity answerRelatedToCalendar;
+    private List<EventEntity> listEventsCalendar=new ArrayList<>();
     private String methodToUse;
     private Boolean satisfied;
     private Boolean wantToCancel;

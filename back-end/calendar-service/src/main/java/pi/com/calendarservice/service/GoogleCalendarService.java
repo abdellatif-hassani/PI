@@ -8,6 +8,7 @@ import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
+import jakarta.ws.rs.NotFoundException;
 import org.springframework.stereotype.Service;
 import pi.com.calendarservice.dto.EventDto;
 import pi.com.calendarservice.mapper.EventMapper;
@@ -92,7 +93,7 @@ public class GoogleCalendarService {
     }
 
 
-    public Object deleteEvent(String accessToken, String keyword) {
+    public Object deleteEventBySummary(String accessToken, String keyword) {
         try {
             GoogleCredential credential = new GoogleCredential().setAccessToken(accessToken);
 
@@ -103,15 +104,38 @@ public class GoogleCalendarService {
             List<EventDto> eventDtos = searchEventsBySummary(accessToken, keyword);
             if(!eventDtos.isEmpty()) {
                 String eventId = eventDtos.get(0).getId();
-                return service.events().delete("primary", eventId).execute();
+                service.events().delete("primary", eventId).execute();
+                return eventDtos.get(0);
             }
             else {
-                System.out.println("Event not found");
+                throw new NotFoundException("Event not found");
             }
         } catch (IOException | GeneralSecurityException e) {
             e.printStackTrace();
         }
         return null;
+    }
+    public Object deleteEventByDate(String accessToken, LocalDate date) {
+        try {
+            GoogleCredential credential = new GoogleCredential().setAccessToken(accessToken);
+
+            Calendar service = new Calendar.Builder(
+                    GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY, credential)
+                    .setApplicationName(APPLICATION_NAME)
+                    .build();
+            List<EventDto> eventDtos = searchEventsByDate(accessToken, date);
+            if(!eventDtos.isEmpty()) {
+                String eventId = eventDtos.get(0).getId();
+                System.out.println(service.events().delete("primary", eventId).execute());
+             return eventDtos.get(0);
+            }
+            else {
+                throw new NotFoundException("Event not found");
+            }
+        } catch (IOException | GeneralSecurityException e) {
+            e.printStackTrace();
+        }
+      throw new NotFoundException("Event not found");
     }
 
 
@@ -133,7 +157,7 @@ public class GoogleCalendarService {
                 .setTimeMax(new DateTime(endDate))
                 .execute();
 
-        return EventMapper.toEventDtos(events.getItems());
+        throw new NotFoundException("Event not found");
     }
 
 

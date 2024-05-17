@@ -21,8 +21,10 @@ public interface CalenderClient {
         EventEntity setEvent(@RequestHeader("Authorization") String authorizationHeader, @RequestBody EventEntity event);
     @PutMapping ("/events/update")
         EventEntity updateEvent(@RequestHeader("Authorization") String authorizationHeader, @RequestBody EventEntity event);
-    @DeleteMapping ("/events/delete")
-    Object deleteEvent(@RequestHeader("Authorization") String authorizationHeader, @RequestParam String eventSummary);
+    @DeleteMapping ("/events/deleteBySummary")
+    Object deleteEventBySummary(@RequestHeader("Authorization") String authorizationHeader, @RequestParam String eventSummary);
+    @DeleteMapping ("/events/deleteByDate")
+    Object deleteEventByDate(@RequestHeader("Authorization") String authorizationHeader, @RequestParam String date);
     @GetMapping("/events/search")
     List<EventEntity> searchEventsByKeyword(@RequestHeader("Authorization") String authorizationHeader,@RequestParam("keyword") String keyword);
     @GetMapping("/events/searchByDate")

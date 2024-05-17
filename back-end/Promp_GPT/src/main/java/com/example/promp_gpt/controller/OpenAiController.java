@@ -1,5 +1,6 @@
 package com.example.promp_gpt.controller;
 
+import com.example.promp_gpt.entities.EventEntity;
 import com.example.promp_gpt.entities.PromptResponse;
 import com.example.promp_gpt.entities.RePromptRequest;
 import com.example.promp_gpt.exception.SomeThingWentWrongException;
@@ -8,6 +9,8 @@ import com.example.promp_gpt.service.OpenAiService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -33,10 +36,21 @@ public class OpenAiController {
         promptResponse.setSatisfied(false);
         promptResponse.setWantToCancel(false);
         if (promptResponse.getMethodToUse()!=null ){
-            if (promptResponse.getSatisfied().equals("calendar") &&
-                    (promptResponse.getMethodToUse().equals("searchByKeyword") || promptResponse.getMethodToUse().equals("searchByDate") || promptResponse.getMethodToUse().equals("get")|| promptResponse.getMethodToUse().equals("delete")))
+            if (promptResponse.getTypeAnswer().equals("calendar") &&
+                    (promptResponse.getMethodToUse().equals("searchByKeyword") || promptResponse.getMethodToUse().equals("searchByDate") || promptResponse.getMethodToUse().equals("get")|| promptResponse.getMethodToUse().equals("deleteByKeyword") || promptResponse.getMethodToUse().equals("deleteByDate")))
             {
-                return openAiService.sendToTheCorrectService(promptResponse, token);
+                if (!(promptResponse.getMethodToUse().equals("deleteByKeyword") || promptResponse.getMethodToUse().equals("deleteByDate")))
+                {
+                    List<EventEntity> listEvents= (List<EventEntity>)openAiService.sendToTheCorrectService(promptResponse, token);
+
+                    listEvents.forEach(eventEntity -> {
+                        promptResponse.getListEventsCalendar().add(eventEntity);
+                    });
+                }else{
+                    return openAiService.sendToTheCorrectService(promptResponse, token);
+                }
+
+
             }
         }
 
