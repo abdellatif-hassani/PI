@@ -24,6 +24,8 @@ public class OpenAiController {
     public PromptResponse makePrompt(@RequestBody String message) throws JsonProcessingException {
         PromptResponse promptResponse =openAiService.getPrompt(message, PromptString.systemText_Prompt);
         System.out.println("****************"+promptResponse);
+       promptResponse.setSatisfied(false);
+       promptResponse.setWantToCancel(false);
         return promptResponse;
     }
 
@@ -31,6 +33,7 @@ public class OpenAiController {
     public PromptResponse makeRePrompt(@RequestBody RePromptRequest rePromptRequest,HttpServletRequest httpServletRequest) throws JsonProcessingException, SomeThingWentWrongException {
         String BearerToken = httpServletRequest.getHeader("Authorization");
         String token = BearerToken.substring(7);
+        System.out.println(rePromptRequest+"hello");
         if (rePromptRequest.getPromptResponse().getSatisfied()!=null && rePromptRequest.getPromptResponse().getSatisfied()==true) {
             openAiService.sendToTheCorrectService(rePromptRequest.getPromptResponse(), token);
             return rePromptRequest.getPromptResponse();
