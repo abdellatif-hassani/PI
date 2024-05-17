@@ -43,9 +43,9 @@ public class CalendarController {
 
     //deleteEvent method to delete an event from the calendar
     @DeleteMapping("/delete")
-    public void deleteEvent(@RequestParam String eventSummary,  HttpServletRequest request) throws IOException, GeneralSecurityException {
+    public Object deleteEvent(@RequestParam String eventSummary,  HttpServletRequest request) throws IOException, GeneralSecurityException {
         String accessToken = (String) request.getAttribute("accessToken");
-        calendarService.deleteEvent(accessToken, eventSummary);
+        return calendarService.deleteEvent(accessToken, eventSummary);
     }
 
     //updateEvent method to update an event in the calendar

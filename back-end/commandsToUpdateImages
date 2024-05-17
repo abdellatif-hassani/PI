@@ -1,0 +1,14 @@
+docker tag pi-calendar_service abderrazzaknouari/pi-calendar_server:latest
+docker push abderrazzaknouari/pi-calendar_server:latest
+
+docker tag pi-eurekaserver abderrazzaknouari/pi-eureka_server:latest
+docker push abderrazzaknouari/pi-eureka_server:latest
+
+ docker tag pi-gmail_server abderrazzaknouari/pi-gmail_server:latest
+docker push abderrazzaknouari/pi-gmail_server:latest
+
+docker tag pi-gpt_server abderrazzaknouari/pi-gpt_server:latest
+docker push abderrazzaknouari/pi-gpt_server:latest
+
+docker tag pi-gateway abderrazzaknouari/pi-gateway:latest
+ docker push abderrazzaknouari/pi-gateway:latest

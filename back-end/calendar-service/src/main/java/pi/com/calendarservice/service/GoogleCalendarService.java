@@ -56,7 +56,8 @@ public class GoogleCalendarService {
                 GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY, credential)
                 .setApplicationName(APPLICATION_NAME)
                 .build();
-        return EventMapper.toEventDto(service.events().insert("primary", eventToAdd).execute());
+        Object execute = service.events().insert("primary", eventToAdd).execute();
+        return EventMapper.toEventDto((Event) execute);
     }
 
     //updateEvent method to update an event in the calendar
@@ -91,7 +92,7 @@ public class GoogleCalendarService {
     }
 
 
-    public void deleteEvent(String accessToken, String keyword) {
+    public Object deleteEvent(String accessToken, String keyword) {
         try {
             GoogleCredential credential = new GoogleCredential().setAccessToken(accessToken);
 
@@ -102,7 +103,7 @@ public class GoogleCalendarService {
             List<EventDto> eventDtos = searchEventsBySummary(accessToken, keyword);
             if(!eventDtos.isEmpty()) {
                 String eventId = eventDtos.get(0).getId();
-                service.events().delete("primary", eventId).execute();
+                return service.events().delete("primary", eventId).execute();
             }
             else {
                 System.out.println("Event not found");
@@ -110,6 +111,7 @@ public class GoogleCalendarService {
         } catch (IOException | GeneralSecurityException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
 

@@ -23,8 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
@@ -75,7 +74,7 @@ public class OpenAiServiceImpl implements OpenAiService {
         System.out.println("******"+promptResponse);
 
         SystemPromptTemplate systemPromptTemplate = new SystemPromptTemplate(systemText);
-        Message systemMessage = systemPromptTemplate.createMessage(Map.of("user_modifications", userText,"original_json_object",promptResponse));
+        Message systemMessage = systemPromptTemplate.createMessage(Map.of("user_modifications", userText,"original_json_object",promptResponse.toString()));
         Prompt prompt = new Prompt(List.of(userMessage, systemMessage));
         ObjectMapper objectMapper = new ObjectMapper();
         System.out.println(systemMessage);
@@ -118,33 +117,55 @@ public class OpenAiServiceImpl implements OpenAiService {
     public Object sendToTheCalenderService(EventEntity eventEntity,String methodToUse,String token,String keyword) throws SomeThingWentWrongException{
             System.out.println("***********" + token);
 
-            // Define the date format
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmXXX");
 
-            // Get the current date and time
-            String now = dateFormat.format(new Date());
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+            DateTimeFormatter formatterIso = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+
+
+
+            String now = dateFormat.format(new Date().getTime());
+
+
+
+            Object execute = null;
 
             if (methodToUse.equals("create")) {
                 if (eventEntity.getStartTime() == null) {
-                    eventEntity.setStartTime(now);
+                    eventEntity.setStartTime(now + ":00+01:00");
                 }
                 if (eventEntity.getEndTime() == null) {
-                    eventEntity.setEndTime(now);
-                }
-                return calendarClient.setEvent("Bearer " + token, eventEntity);
-            } else if (methodToUse.equals("delete")) {
-                calendarClient.deleteEvent("Bearer " + token, eventEntity);
-                return eventEntity;
-            } else if (methodToUse.equals("searchByKeyword")) {
-                return calendarClient.searchEventsByKeyword("Bearer " + token, keyword);
-            } else if (methodToUse.equals("searchByDate")) {
-                System.out.println("***********" + keyword);
-                return calendarClient.searchEventsByDate("Bearer " + token, keyword);
-            } else if (methodToUse.equals("get")) {
-                return calendarClient.getEvent("Bearer " + token);
-            }
+                    OffsetDateTime offsetDateTime = OffsetDateTime.parse(eventEntity.getStartTime() , formatterIso);
+                    LocalDate localDate = offsetDateTime.toLocalDate();
+                    LocalDateTime localDateTime = localDate.atStartOfDay();
 
+                    // Add 24 hours to the LocalDateTime
+                     localDateTime = localDateTime.plusHours(24);
+
+                    // Convert LocalDateTime to Date
+                    ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.systemDefault());
+                    Date date = Date.from(zonedDateTime.toInstant());
+
+                    // Format the Date object
+                    String end = dateFormat.format(date);
+                    eventEntity.setEndTime(end+":00+01:00");
+                }
+                System.out.println("***********" + eventEntity);
+                execute = calendarClient.setEvent("Bearer " + token, eventEntity);
+            } else if (methodToUse.equals("delete")) {
+                return calendarClient.deleteEvent("Bearer " + token, eventEntity.getKeyword());
+
+            } else if (methodToUse.equals("searchByKeyword")) {
+                 execute = calendarClient.searchEventsByKeyword("Bearer " + token, keyword);
+
+            } else if (methodToUse.equals("searchByDate")) {
+
+                execute=calendarClient.searchEventsByDate("Bearer " + token, keyword);
+            } else if (methodToUse.equals("get")) {
+                execute= calendarClient.getEvent("Bearer " + token);
+            }
+        if (execute==null)
             throw new SomeThingWentWrongException("Something went wrong");
+        return execute;
         }
 
 
