@@ -21,26 +21,55 @@ public class OpenAiController {
     }
 
     @PostMapping("/prompt")
-    public PromptResponse makePrompt(@RequestBody String message) throws JsonProcessingException {
+    public Object makePrompt(@RequestBody String message,HttpServletRequest httpServletRequest) throws JsonProcessingException, SomeThingWentWrongException {
+        String BearerToken = httpServletRequest.getHeader("Authorization");
+        String token = BearerToken.substring(7);
         PromptResponse promptResponse =openAiService.getPrompt(message, PromptString.systemText_Prompt);
         System.out.println("****************"+promptResponse);
        promptResponse.setSatisfied(false);
        promptResponse.setWantToCancel(false);
+
+        System.out.println("************************************test********************************************");
+        promptResponse.setSatisfied(false);
+        promptResponse.setWantToCancel(false);
+        if (promptResponse.getMethodToUse().equals("searchByKeyword") || promptResponse.getMethodToUse().equals("searchByDate") || promptResponse.getMethodToUse().equals("get")|| promptResponse.getMethodToUse().equals("delete"))
+        {
+           return openAiService.sendToTheCorrectService(promptResponse, token);
+        }
         return promptResponse;
     }
 
     @PostMapping("/reprompt")
-    public PromptResponse makeRePrompt(@RequestBody RePromptRequest rePromptRequest,HttpServletRequest httpServletRequest) throws JsonProcessingException, SomeThingWentWrongException {
+    public Object makeRePrompt(@RequestBody RePromptRequest rePromptRequest,HttpServletRequest httpServletRequest) throws JsonProcessingException, SomeThingWentWrongException {
         String BearerToken = httpServletRequest.getHeader("Authorization");
         String token = BearerToken.substring(7);
         System.out.println(rePromptRequest+"hello");
         if (rePromptRequest.getPromptResponse().getSatisfied()!=null && rePromptRequest.getPromptResponse().getSatisfied()==true) {
-            openAiService.sendToTheCorrectService(rePromptRequest.getPromptResponse(), token);
-            return rePromptRequest.getPromptResponse();
+            return openAiService.sendToTheCorrectService(rePromptRequest.getPromptResponse(), token);
+
         } else {
-            PromptResponse promptResponse = openAiService.getRePrompt(rePromptRequest.getPromptResponse(), rePromptRequest.getUserText(), PromptString.systemText_RePrompt);
-            if (promptResponse.getSatisfied()==true) openAiService.sendToTheCorrectService(promptResponse, token);
-            return promptResponse;
+            PromptResponse promptResponse = null;
+            if (rePromptRequest.getPromptResponse().getTypeAnswer().equals("email"))
+            {
+                promptResponse= openAiService.getRePrompt(rePromptRequest.getPromptResponse(), rePromptRequest.getUserText(), PromptString.systemText_RePrompt_Gmail);
+            }
+            else if (rePromptRequest.getPromptResponse().getTypeAnswer().equals("calendar"))
+            {
+                promptResponse= openAiService.getRePrompt(rePromptRequest.getPromptResponse(), rePromptRequest.getUserText(), PromptString.systemText_RePrompt_Calendar);
+                System.out.println("*********helllo"+promptResponse);
+            }
+            if (promptResponse!=null && promptResponse.getSatisfied()==true) {
+                Object t=openAiService.sendToTheCorrectService(promptResponse, token);
+                System.out.println(t);
+
+                return openAiService.sendToTheCorrectService(promptResponse, token);
+
+            }
+            if (promptResponse!=null)
+                return promptResponse;
+            else
+                throw new SomeThingWentWrongException("Something went wrong");
+
         }
     }
 }
