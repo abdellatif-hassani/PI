@@ -12,8 +12,7 @@ export class AuthGoogleService {
   private refreshSubscription!: Subscription;
 
   constructor(private oAuthService: OAuthService, private router: Router) {
-    this.initConfiguration();
-    this.startTokenRefreshTimer();
+    
   }
 
   initConfiguration() {
@@ -22,7 +21,7 @@ export class AuthGoogleService {
       strictDiscoveryDocumentValidation: false,
       redirectUri: window.location.origin + '/test',
       clientId: '620536565122-91ob5s78lu1t6pjcl2tbb0v0rdban5cj.apps.googleusercontent.com',
-      scope: 'openid profile email https://www.googleapis.com/auth/calendar',
+      scope: 'openid profile email https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/gmail.modify ',
     };
     
     this.oAuthService.configure(authConfig);
@@ -31,6 +30,7 @@ export class AuthGoogleService {
       console.log('************Discovery Document loaded:', this.oAuthService.discoveryDocumentLoaded$)
       if (this.oAuthService.hasValidAccessToken()) {
         this.storeToken(this.oAuthService.getAccessToken());
+        this.oAuthService.setupAutomaticSilentRefresh();
       }
       console.log('Logged in:', this.oAuthService.hasValidAccessToken());
       console.log('Access Token:', this.oAuthService.getAccessToken());
@@ -43,12 +43,15 @@ export class AuthGoogleService {
 
   login() {
     this.oAuthService.initImplicitFlow();
+    this.initConfiguration();
+    this.startTokenRefreshTimer();
   }
 
   logout() {
     this.oAuthService.revokeTokenAndLogout();
     this.oAuthService.logOut();
     this.clearToken(); 
+    this.clearMessages();
     this.router.navigate(['/login']); 
   }
 
@@ -66,6 +69,10 @@ export class AuthGoogleService {
 
   getProfile() {
     return this.oAuthService.getIdentityClaims();
+  }
+
+  private clearMessages() {
+    localStorage.removeItem('requestsAndResponses');
   }
 
   private startTokenRefreshTimer() {

@@ -1,26 +1,41 @@
 
 .profile-card {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between; /* Align items vertically with space between */
-    height: 100%; /* Make card take up full height */
-  }
-  
-  .profile-card mat-card-header {
-    
-    margin-bottom: 1em;
-  }
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Set to full viewport height or adjust as needed */
+}
 
-  .chat-content {
-    display: flex;
-    flex-direction: column;
-    flex: 1; /* Grow to take up remaining space */
-  }
+.profile-card mat-card-header {
+  margin-bottom: 1em;
+}
+
+.profile-card mat-card-content {
+  flex: 1; /* This ensures that the content section takes up all available space */
+  overflow-y: auto; /* Allows scrolling within the card content if needed */
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-content {
+  display: flex;
+  align-items: center; /* Align items vertically in the center */
+  justify-content: space-between; /* Spread out items */
+  padding: 10px 20px; /* Padding around the chat area */
+  background-color: #fff; /* Ensures it's visually distinct if needed */
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.1); /* Optional shadow for aesthetics */
+}
   
+.chat-input .mat-form-field {
+  width: 100%; /* Ensure the input field uses all available space */
+  margin-right: 10px; /* Space between the input and the send button */
+}
+.send-btn {
+  margin: 0;
+}
+
   .chat-input {
-    display: flex;
-    flex-direction: column;
-    flex: 1; 
+    flex: 1; /* Allow the input to take up as much space as possible */
+    margin-right: 8px;
   }
 
   .chat-input textarea {
@@ -31,17 +46,13 @@
     border-radius: 5px; 
       
   }
-  
-  .send-btn {
-    align-self: center; 
-  }
+
   
 
 .user-prompt {
     background-color: #e6f2ff; /* Light blue for user prompt */
     padding: 10px;
     border-radius: 5px;
-    margin-bottom: 10px;
 }
 
 .assistant-response {
@@ -51,17 +62,32 @@
     margin-bottom: 10px;
 }
 
-.messages{
-  max-height: 300px;
-  overflow-y: auto;
+.messages {
+  flex: 1; /* Allows messages container to fill all available space, pushing chat-content to the bottom */
+  overflow-y: auto; /* Ensures scrollability within the messages container */
+  max-height: calc(100% - 100px); /* Adjust max-height accordingly */
 }
 
 .down-btn{
   position: fixed;
   bottom: 4em;
-  right: 0.8em;
+  right: 2.8em;
   z-index: 1000;
   font-size: 3em;
   padding: 1em;
 }
 
+.empty-prompt{
+  display: none;
+}
+
+.delete-history-btn {
+    margin-right: 40px; 
+    color: #666; 
+    background-color: #11b7cd;
+}
+
+.delete-history-btn:hover {
+  background-color: #083b47;
+  color: white;
+}

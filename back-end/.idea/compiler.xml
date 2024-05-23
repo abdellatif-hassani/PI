@@ -10,8 +10,8 @@
         <module name="eurekaserver" />
         <module name="calendar-service" />
         <module name="Speech-to-Text-Service" />
-        <module name="GmailApi" />
         <module name="gateway" />
+        <module name="GmailApi" />
         <module name="Promp_GPT" />
       </profile>
     </annotationProcessing>

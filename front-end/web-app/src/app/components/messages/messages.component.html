@@ -1,43 +1,77 @@
 <mat-card class="profile-card">
-    <mat-card-header>
+  <mat-card-header>
+    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+      <div>
         <mat-card-title>Assistant MNH.1.0</mat-card-title>
         <mat-card-subtitle>Send your request</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-        <div class="messages" #messagesContainer>
-            <div *ngFor="let rr of requestsAndResponses">
-              <p [ngClass]="{'user-prompt': rr.isUserPrompt, 'assistant-response': !rr.isUserPrompt}">
-                <strong>{{ rr.isUserPrompt ? user?.name : 'Assistant' }}:</strong> {{ rr.prompt }}
-              </p>
-              <p [ngClass]="{'assistant-response': rr.isUserPrompt, 'user-prompt': !rr.isUserPrompt}">
-                <strong>{{ rr.isUserPrompt ? 'Assistant' : user?.name }}:</strong>
-                 <ng-container *ngIf="getMessageResponse(rr.response)">
-                  <p>{{ getMessageResponse(rr.response)?.answerText }}</p>
-                </ng-container>
-                <ng-container *ngIf="getEmailResponse(rr.response)">
-                  <p><strong>Verify mail to send</strong></p>
-                  <p><strong>To:</strong> {{ getEmailResponse(rr.response)?.answerRelatedToGmail!.to }}</p>
-                  <p><strong>Subject:</strong> {{ getEmailResponse(rr.response)?.answerRelatedToGmail!.subject }}</p>
-                  <p><strong>Message:</strong> {{ getEmailResponse(rr.response)?.answerRelatedToGmail!.message }}</p>
-                  <button mat-raised-button color="primary"
-                     (click)="confirmEmail(rr.response)">
-                    Confirm Sending
-                  </button>
-                </ng-container>
-              </p>
-            </div>
-        </div>
-        <mat-icon matListIcon (click)="scrollToBottom()" color="primary" class="down-btn">
-            arrow_drop_down_circle
-        </mat-icon>
-        <div class="chat-content">
-            <mat-form-field class="chat-input">
-                <textarea matInput placeholder="Type a message" [(ngModel)]="prompt"></textarea>
-            </mat-form-field>
-            <button mat-raised-button color="primary" 
-            (click)="sendRequest()" class="send-btn">Send</button>
-         </div>
-    </mat-card-content>  
+      </div>
+      <button mat-button (click)="deleteHistory()" class="delete-history-btn">
+        <mat-icon>delete_outline</mat-icon>
+        Delete History
+      </button>
+    </div>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="messages" #messagesContainer>
+      <div *ngFor="let rr of requestsAndResponses; let i = index">
+        <!-- user prompt -->
+        <p class="user-prompt" [ngClass]="{ 'empty-prompt': !rr.prompt }">
+          <strong>{{ user?.name }}:</strong> {{ rr.prompt }}
+        </p>
+        <!-- assistant response -->
+        <p class="assistant-response">
+          <strong>Assistant:</strong>
+          <ng-container *ngIf="getMessageResponse(rr.response)">
+            <p>{{ getMessageResponse(rr.response)?.answerText }}</p>
+          </ng-container>
+          <ng-container *ngIf="getEmailResponse(rr.response)">
+            <!-- Check if the email has been sent (satisfied is true) -->
+            <ng-container *ngIf="rr.response.satisfied && rr.isEmailBeingSent; else emailDetails">
+              <p>Email is sent successfully!</p>
+            </ng-container>
+            <!-- Template for displaying email details if not yet sent -->
+            <ng-template #emailDetails>
+              <p *ngIf="!rr.isRequestTraited"><strong>Verify mail to send:</strong></p>
+              <p *ngIf="rr.isEmailBeingSent">(This mail is sent ...)</p>
+              <p><strong>To:</strong> {{ getEmailResponse(rr.response)?.answerRelatedToGmail!.to }}</p>
+              <p><strong>Subject:</strong> {{ getEmailResponse(rr.response)?.answerRelatedToGmail!.subject }}</p>
+              <p><strong>Message:</strong> {{ getEmailResponse(rr.response)?.answerRelatedToGmail!.message }}</p>
+              <button mat-raised-button color="primary" (click)="confirmEmail(rr.response, i)" *ngIf="!rr.isRequestTraited">
+                Confirm Sending
+              </button>
+            </ng-template>
+          </ng-container>
+          <ng-container *ngIf="getCalendarResponse(rr.response)">
+            <ng-container *ngIf="rr.response.satisfied && rr.isEmailBeingSent; else calendarDetails">
+              <p>Event is added!</p>
+            </ng-container>
+            <ng-template #calendarDetails>
+              <p *ngIf="!rr.isRequestTraited"><strong>Verify Event:</strong></p>
+              <p *ngIf="rr.isEmailBeingSent && rr.response.satisfied">(Event Added ...)</p>
+              <p><strong>Summary:</strong> {{ getCalendarResponse(rr.response)?.answerRelatedToCalendar!.summary }}</p>
+              <p><strong>Location:</strong> {{ getCalendarResponse(rr.response)?.answerRelatedToCalendar!.location }}</p>
+              <p><strong>Description:</strong> {{ getCalendarResponse(rr.response)?.answerRelatedToCalendar!.description }}</p>
+              <p><strong>Start Time:</strong> {{ getCalendarResponse(rr.response)?.answerRelatedToCalendar!.startTime | date: 'dd MMM yyyy, HH:mm' }}</p>
+              <p><strong>End Time:</strong> {{ getCalendarResponse(rr.response)?.answerRelatedToCalendar!.endTime | date: 'dd MMM yyyy, HH:mm' }}</p>
+              <button mat-raised-button color="primary" (click)="addToCalendar(rr.response, i)"
+              *ngIf="!rr.isRequestTraited"
+              >Add to Calendar
+              </button>
+            </ng-template>
+          </ng-container>
+        </p>
+      </div>
+    </div>
+    <mat-icon matListIcon (click)="scrollToBottom()" color="primary" class="down-btn">
+      arrow_drop_down_circle
+    </mat-icon>
+    <div class="chat-content">
+      <mat-form-field class="chat-input">
+        <textarea matInput placeholder="Type a message" [(ngModel)]="prompt"></textarea>
+      </mat-form-field>
+      <button mat-icon-button (click)="makeAcall()" class="send-btn">
+        <mat-icon>send</mat-icon>
+      </button>
+    </div>
+  </mat-card-content>
 </mat-card>
-  
-  
