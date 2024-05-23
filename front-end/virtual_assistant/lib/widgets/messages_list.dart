@@ -48,9 +48,9 @@ class MessagesList extends StatelessWidget {
             var message = messages[index];
             return BubbleSpecialThree(
               text: message.message ?? "",
-              color: message.isSender ? Color(0xFF1B97F3) : Color(0xFF4B5563),
+              color: message.isSender ? Color(0xFF1B97F3) : Color(0xFFE8E8EE),
               tail: true,
-              textStyle: TextStyle(color: Colors.white, fontSize: 16),
+              textStyle: TextStyle(color:( message.isSender ? Colors.white:Colors.black), fontSize: 16),
               sent: message.isSent,
               isSender: message.isSender,
             );

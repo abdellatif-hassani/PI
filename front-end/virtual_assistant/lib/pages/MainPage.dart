@@ -70,11 +70,7 @@ class LoginPage extends StatelessWidget {
                     children: <Widget>[
                       Hero(
                         tag: 'heroicon',
-                        child: Icon(
-                          Icons.textsms,
-                          size: 1* 100,
-                          color: Colors.deepPurple[900],
-                        ),
+                        child:Image.asset("assets/logo.png",width: 160,)
 
                       ),
                       SizedBox(
@@ -83,9 +79,9 @@ class LoginPage extends StatelessWidget {
                       Hero(
                         tag: 'HeroTitle',
                         child: Text(
-                          'Chatter',
+                          'Ai Assistant',
                           style: TextStyle(
-                              color: Colors.deepPurple[900],
+                              color:  Color(0xFF2E58FF),
                               fontFamily: 'Poppins',
                               fontSize: 26,
                               fontWeight: FontWeight.w700),
@@ -97,19 +93,17 @@ class LoginPage extends StatelessWidget {
                       TyperAnimatedTextKit(
                         isRepeatingAnimation: false,
                         speed:Duration(milliseconds: 60),
-                        text:["World's most private chatting app".toUpperCase()],
+                        text:["Your virtual Assistant".toUpperCase()],
                         textStyle: TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 12,
-                            color: Colors.deepPurple),
+                            color:  Color(0xFF2E58FF)),
                       ),
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.15,
                       ),
 
-                      SizedBox(
-                        height: 10,
-                      ),
+
                       Hero(
                         tag: 'signupbutton',
 
@@ -118,7 +112,7 @@ class LoginPage extends StatelessWidget {
                           text: 'Signup',
 
                           accentColor: Colors.white,
-                          mainColor: Colors.deepPurple,
+                          mainColor: Color(0xFF2E58FF),
                           onpress: () async {
                             print("abdo");
                             await context.read<LoginController>().login(context);
@@ -128,7 +122,7 @@ class LoginPage extends StatelessWidget {
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.1,
                       ),
-                      Text('Made with ♥ by ishandeveloper')
+
                       // ... rest of your widgets
                     ],
                   ),

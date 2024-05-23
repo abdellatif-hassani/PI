@@ -1,18 +1,18 @@
 import 'package:intl/intl.dart';
 
 class CalendarInfo {
-  final String summary;
-  final String location;
-  final String description;
-  final String startTime;
-  final String endTime;
+   String? summary;
+   String? location;
+   String? description;
+   String? startTime;
+   String? endTime;
 
   CalendarInfo({
-    required this.summary,
-    required this.location,
-    required this.description,
-    required this.startTime,
-    required this.endTime,
+     this.summary,
+     this.location,
+     this.description,
+     this.startTime,
+     this.endTime,
   });
 
   factory CalendarInfo.fromJson(Map<String, dynamic> json) {
@@ -34,13 +34,13 @@ class CalendarInfo {
       'endTime': endTime,
     };
   }
+
   @override
   String toString() {
-
     return '${String.fromCharCode(0x1F4C5)}: '
         '$summary \n ${String.fromCharCode(0x1f4cd)}:'
         ' $location \n ${String.fromCharCode(0x1f4dd)}: $description \n'
-        ' ${String.fromCharCode(0x1f55c)}: ${DateFormat("HH:mm d MMM yyyy").format(DateTime.parse(startTime))} \n'
-        ' ${String.fromCharCode(0x1f55b)}: ${DateFormat("HH:mm d MMM yyyy").format(DateTime.parse(endTime))}';
+        ' ${String.fromCharCode(0x1f55c)}: ${DateFormat("HH:mm d MMM yyyy").format(DateTime.parse(startTime??""))} \n'
+        ' ${String.fromCharCode(0x1f55b)}: ${DateFormat("HH:mm d MMM yyyy").format(DateTime.parse(endTime??""))}';
   }
 }

@@ -25,8 +25,12 @@ class EmailInfo {
       'message': message,
     };
   }
+  // @override
+  // String toString() {
+  //   return '${String.fromCharCode(0x1F4EC)}: $to \n ${String.fromCharCode(0x1f3af)}: $subject \n ${String.fromCharCode(0X1f4ac)}: $message';
+  // }
   @override
   String toString() {
-    return '${String.fromCharCode(0x1F4EC)}: $to \n ${String.fromCharCode(0x1f3af)}: $subject \n ${String.fromCharCode(0X1f4ac)}: $message';
+    return 'to: $to \n Subject $subject \n Body : $message';
   }
 }

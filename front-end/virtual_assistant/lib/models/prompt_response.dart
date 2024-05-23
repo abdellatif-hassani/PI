@@ -4,28 +4,31 @@ import 'package:virtual_assistant/pages/chat_page.dart';
 import 'calendar_info.dart';
 import 'email_info.dart';
 import 'jsonable.dart';
-class PromptResponse extends Jsonable{
-  final PromptResponseType typeAnswer;
-  final String answerText;
-  final EmailInfo? answerRelatedToGmail;
-  final CalendarInfo? answerRelatedToCalendar;
-  final String? methodToUse;
-  final bool? satisfied;
-  final bool? wantToCancel;
+
+class PromptResponse extends Jsonable {
+  PromptResponseType? typeAnswer;
+  String? answerText;
+  EmailInfo? answerRelatedToGmail;
+  CalendarInfo? answerRelatedToCalendar;
+  List<CalendarInfo>   listEventsCalendar;
+  String? methodToUse;
+  bool? satisfied;
+  bool? wantToCancel;
 
   PromptResponse({
-    required this.typeAnswer,
-    required this.answerText,
-    required this.answerRelatedToGmail,
-    required this.answerRelatedToCalendar,
-    required this.methodToUse,
-    required this.satisfied,
-    required this.wantToCancel,
+    this.typeAnswer,
+    this.answerText,
+    this.answerRelatedToGmail,
+    this.answerRelatedToCalendar,
+    this.methodToUse,
+    this.satisfied,
+    this.wantToCancel,
+    this.listEventsCalendar = const [],
   });
 
   factory PromptResponse.fromJson(Map<String, dynamic> json) {
     return PromptResponse(
-      typeAnswer:  PromptResponseType.values.byName(json['typeAnswer']),
+      typeAnswer: PromptResponseType.values.byName(json['typeAnswer']),
       answerText: json['answerText'],
       answerRelatedToGmail: json['answerRelatedToGmail'] != null
           ? EmailInfo.fromJson(json['answerRelatedToGmail'])
@@ -36,29 +39,39 @@ class PromptResponse extends Jsonable{
       methodToUse: json['methodToUse'],
       satisfied: json['satisfied'],
       wantToCancel: json['wantToCancel'],
+      listEventsCalendar: json['listEventsCalendar'] != null
+          ? List<CalendarInfo>.from(
+              json['listEventsCalendar'].map((x) => CalendarInfo.fromJson(x)))
+          : [],
     );
   }
-@override
+  @override
   Map<String, dynamic> toJson() {
     return {
-      'typeAnswer': PromptResponseType.values.indexOf(typeAnswer),
+      'typeAnswer': typeAnswer?.name,
       'answerText': answerText,
       'answerRelatedToGmail': answerRelatedToGmail?.toJson(),
-      'answerRelatedToCalendar':
-      answerRelatedToCalendar?.toJson(),
+      'answerRelatedToCalendar': answerRelatedToCalendar?.toJson(),
       'methodToUse': methodToUse,
       'satisfied': satisfied,
       'wantToCancel': wantToCancel,
     };
   }
+
   @override
   String toString() {
-    String messageText= answerText+"\n";
-    if(answerRelatedToCalendar != null) {
-      messageText= "$messageText ${answerRelatedToCalendar!.toString()}";
-    } else if(answerRelatedToGmail != null) {
-      messageText= "$messageText ${answerRelatedToGmail!.toString()}";
+    String messageText = answerText ?? "";
+    if(typeAnswer == PromptResponseType.calendar) {
+      if(listEventsCalendar.isNotEmpty){
+        messageText = "$messageText \n ${listEventsCalendar.map((e) => e.toString()).join("\n----------------\n")}";
+      }else  if (answerRelatedToCalendar != null) {
+        messageText = "$messageText \n ${answerRelatedToCalendar!.toString()}";
+      }
+
+    }else if (typeAnswer != null) {
+      messageText = "$messageText  \n ${answerRelatedToGmail!.toString()}";
     }
+
     return messageText;
   }
 }
