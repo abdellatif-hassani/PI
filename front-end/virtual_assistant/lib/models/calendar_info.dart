@@ -17,11 +17,11 @@ class CalendarInfo {
 
   factory CalendarInfo.fromJson(Map<String, dynamic> json) {
     return CalendarInfo(
-      summary: json['summary'],
-      location: json['location'],
-      description: json['description'],
-      startTime: json['startTime'],
-      endTime: json['endTime'],
+      summary: json['summary']?? "no summary",
+      location: json['location']?? "no location",
+      description: json['description']??"no description",
+      startTime: json['startTime'] ?? "no start time",
+      endTime: json['endTime']??"no end time",
     );
   }
 
@@ -38,8 +38,8 @@ class CalendarInfo {
   @override
   String toString() {
     return '${String.fromCharCode(0x1F4C5)}: '
-        '$summary \n ${String.fromCharCode(0x1f4cd)}:'
-        ' $location \n ${String.fromCharCode(0x1f4dd)}: $description \n'
+        '${summary??'no summary'}  \n ${String.fromCharCode(0x1f4cd)}:'
+        ' ${location??'no location'} \n ${String.fromCharCode(0x1f4dd)}: ${description??'no description'} \n'
         ' ${String.fromCharCode(0x1f55c)}: ${DateFormat("HH:mm d MMM yyyy").format(DateTime.parse(startTime??""))} \n'
         ' ${String.fromCharCode(0x1f55b)}: ${DateFormat("HH:mm d MMM yyyy").format(DateTime.parse(endTime??""))}';
   }

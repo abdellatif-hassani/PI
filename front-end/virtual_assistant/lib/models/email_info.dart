@@ -12,9 +12,9 @@ class EmailInfo {
 
   factory EmailInfo.fromJson(Map<String, dynamic> json) {
     return EmailInfo(
-      to: json['to'],
-      subject: json['subject'],
-      message: json['message'],
+      to: json['to']?? "no destination",
+      subject: json['subject']??"no subject",
+      message: json['message']??"no message",
     );
   }
 

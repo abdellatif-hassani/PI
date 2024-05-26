@@ -10,6 +10,7 @@ import 'package:hive/hive.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:virtual_assistant/models/attachement.dart';
 import 'package:virtual_assistant/models/data.dart';
+import 'package:virtual_assistant/models/method_to_use_type.dart';
 import 'package:virtual_assistant/models/prompt_request.dart';
 import 'package:virtual_assistant/models/prompt_response.dart';
 import 'package:virtual_assistant/models/prompt_response_type.dart';
@@ -73,7 +74,7 @@ class ChatController with ChangeNotifier {
       lastPrompt = promptResponse.data;
       if (promptResponse.statusCode == 200) {
         if (promptResponse.data!.typeAnswer == PromptResponseType.message ||
-            (promptResponse.data!.methodToUse != "create")) {
+            promptResponse.data!.methodToUse != MethodToUseType.create || promptResponse.data!.methodToUse != MethodToUseType.send) {
           lastPrompt = null;
           storageService.saveMessage(Message(
               message: promptResponse.data.toString(), isSender: false));
@@ -83,12 +84,14 @@ class ChatController with ChangeNotifier {
         } else if (promptResponse.data!.satisfied == true) {
           lastPrompt = null;
           storageService.saveMessage(
-              Message(message: "your request is Sent", isSender: false));
+              Message(message: "your request is Sent", isSender: false)
+          );
         }
       } else {
         lastPrompt = null;
         storageService.saveMessage(
-            Message(message: promptResponse.error, isSender: false));
+            Message(message: promptResponse.error, isSender: false)
+        );
       }
     }
     catch (e) {
