@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, OnInit, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, ViewChild, OnInit, AfterViewInit, QueryList, ViewChildren } from '@angular/core';
 import { AuthGoogleService } from '../../services/auth-google.service';
 import { ApiService } from '../../services/api.service';
 import { CalendarDetails, AnyResponse, MessageResponse, PromptResponse, EmailResponse, CalendarResponse, RePromptRequest } from '../../models/response-types';
@@ -28,12 +28,10 @@ export class MessagesComponent implements OnInit, AfterViewInit {
   isFirstRequest: boolean = true;
 
   @ViewChild('messagesContainer') messagesContainer!: ElementRef;
+  @ViewChildren(MatPaginator) paginators!: QueryList<MatPaginator>;
+  @ViewChildren(MatSort) sorts!: QueryList<MatSort>;
 
   displayedColumns: string[] = ['summary', 'location', 'description', 'startTime', 'endTime'];
-  dataSource: MatTableDataSource<CalendarDetails> = new MatTableDataSource<CalendarDetails>([]);
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private authService: AuthGoogleService,
@@ -43,24 +41,41 @@ export class MessagesComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.loadMessages();
     this.user = this.authService.getProfile();
+    console.log('User profile:', this.user); // Debugging statement
+    this.loadMessages();
     this.isFirstRequest = true;
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    this.setPaginatorsAndSorts();
+    this.paginators.changes.subscribe(() => this.setPaginatorsAndSorts());
+    this.sorts.changes.subscribe(() => this.setPaginatorsAndSorts());
+  }
+
+  private setPaginatorsAndSorts() {
+    if (this.paginators.length === this.requestsAndResponses.length) {
+      this.requestsAndResponses.forEach((item, index) => {
+        if (item.dataSource) {
+          item.dataSource.paginator = this.paginators.toArray()[index];
+          item.dataSource.sort = this.sorts.toArray()[index];
+        }
+      });
+    }
   }
 
   updateTableData(response: CalendarResponse, index: number) {
     if (response.listEventsCalendar) {
       const dataSource = new MatTableDataSource<CalendarDetails>(response.listEventsCalendar);
       this.requestsAndResponses[index].dataSource = dataSource;
+      if (this.paginators.toArray().length > index) {
+        dataSource.paginator = this.paginators.toArray()[index];
+      }
+      if (this.sorts.toArray().length > index) {
+        dataSource.sort = this.sorts.toArray()[index];
+      }
     }
   }
-  
-  
 
   loadMessages() {
     const data = localStorage.getItem('requestsAndResponses');
@@ -77,8 +92,6 @@ export class MessagesComponent implements OnInit, AfterViewInit {
       });
     }
   }
-  
-  
 
   async makeAcall() {
     if (this.isFirstRequest) {
@@ -106,7 +119,6 @@ export class MessagesComponent implements OnInit, AfterViewInit {
       }
     }
   }
-  
 
   sendRequest(): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -147,7 +159,7 @@ export class MessagesComponent implements OnInit, AfterViewInit {
       );
     });
   }
-  
+
   reSendRequest(): Promise<void> {
     return new Promise((resolve, reject) => {
       if (!this.prompt.trim()) {
@@ -164,7 +176,11 @@ export class MessagesComponent implements OnInit, AfterViewInit {
           }
           const formattedResponse = this.formatResponse(response);
           if (formattedResponse) {
-            const requestAndResponse = { prompt: this.prompt, response: formattedResponse, isEmailBeingSent: true};
+            let requestAndResponse;
+            if(formattedResponse.satisfied)
+               requestAndResponse = { prompt: this.prompt, response: formattedResponse, isEmailBeingSent: true};
+            else
+                requestAndResponse = { prompt: this.prompt, response: formattedResponse};
             this.requestsAndResponses.push(requestAndResponse);
             const index = this.requestsAndResponses.length - 1;
             if (isCalendarResponse(formattedResponse)) {
@@ -187,8 +203,6 @@ export class MessagesComponent implements OnInit, AfterViewInit {
       this.disableButton();
     });
   }
-  
-  
 
   confirmEmail(response: AnyResponse, i: number) {
     if (isEmailResponse(response)) {
@@ -260,7 +274,6 @@ export class MessagesComponent implements OnInit, AfterViewInit {
     localStorage.setItem('requestsAndResponses', JSON.stringify(serializableData));
   }
 
-
   serializeResponse(response: AnyResponse): AnyResponse {
     if (isCalendarResponse(response)) {
       return {
@@ -293,8 +306,6 @@ export class MessagesComponent implements OnInit, AfterViewInit {
     }
   }
 
-
-
   deleteHistory() {
     if(localStorage.getItem('requestsAndResponses')){
       localStorage.removeItem('requestsAndResponses');
@@ -306,7 +317,7 @@ export class MessagesComponent implements OnInit, AfterViewInit {
 
   disableButton() {
     if(this.requestsAndResponses.length > 1) {
-      for(let i=0; i < this.requestsAndResponses.length; i++) {
+      for(let i=0; i < this.requestsAndResponses.length-1; i++) {
         this.requestsAndResponses[i].isRequestTraited = true;
       }
     }
