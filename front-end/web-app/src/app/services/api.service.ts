@@ -9,7 +9,7 @@ import { AnyResponse, RePromptRequest, PromptResponse } from '../models/response
 })
 export class ApiService {
   
-  private apiUrl = 'http://34.16.198.10:9090/prompt_service'; 
+  private apiUrl = 'http://34.16.227.127:9090/prompt_service'; 
 
   constructor(private http: HttpClient) {}
 
@@ -55,7 +55,6 @@ export class ApiService {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`
     });
-    reprompt.promptResponse.satisfied = true;
     console.log('reprompt:', reprompt);
     return this.http.post<any>(`${this.apiUrl}/reprompt`, reprompt, { headers }).pipe(
       catchError(error => {
@@ -68,3 +67,5 @@ export class ApiService {
 
 
 }
+
+

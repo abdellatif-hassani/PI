@@ -1,21 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthGoogleService } from '../../services/auth-google.service';
-import { ApiService } from '../../services/api.service'; 
 import { Router } from '@angular/router';
-
-
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.css'
+  styleUrls: ['./dashboard.component.css'] // Fixed typo: styleUrl -> styleUrls
 })
 export class DashboardComponent implements OnInit {
-  toProfile() {
-      this.router.navigate(['/profile']);
-  }
   profile: any;
-  
 
   constructor(
     private authService: AuthGoogleService,
@@ -35,5 +28,7 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(['/login']);
   }
 
-  
+  toProfile() {
+    this.router.navigate(['/profile']);
+  }
 }
