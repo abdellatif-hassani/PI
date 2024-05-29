@@ -9,7 +9,7 @@ import { AnyResponse, RePromptRequest, PromptResponse } from '../models/response
 })
 export class ApiService {
   
-  private apiUrl = 'http://34.16.227.127:9090/prompt_service'; 
+  private apiUrl = 'http://localhost:9090/prompt_service'; 
 
   constructor(private http: HttpClient) {}
 
