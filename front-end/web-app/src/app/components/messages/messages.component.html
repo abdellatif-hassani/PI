@@ -30,8 +30,6 @@
               <p>canceled!</p>
             </ng-container>
             <ng-template #emailStatus>
-              {{ rr.response.satisfied }}
-              {{ isFirstRequest }} {{ rr.isEmailBeingSent }}
               <ng-container *ngIf="rr.response.satisfied && rr.isEmailBeingSent; else emailDetails">
                 <p class="successSend">Email is sent successfully!</p>
               </ng-container>
@@ -62,8 +60,6 @@
               <!-- Template for displaying calendar details if not yet added and not searching by date or keyword -->
               <ng-template #calendarDetails>
                 <ng-container *ngIf="isNotList(rr.response)">
-                  {{ rr.response.satisfied }}
-                  {{ isFirstRequest }}
                   <p *ngIf="!rr.isRequestTraited" class="verifyOperation"><strong>Verify Event:</strong></p>
                   <p *ngIf="rr.isEmailBeingSent && rr.response.satisfied">(Event Added ...)</p>
                   <p *ngIf="getCalendarResponse(rr.response)?.answerRelatedToCalendar!.summary">
