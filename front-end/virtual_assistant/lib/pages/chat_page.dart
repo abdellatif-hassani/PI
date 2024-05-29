@@ -82,7 +82,6 @@ class _ChatterScreenState extends State<ChatterScreen> {
               child: LinearProgressIndicatorWidget(),
               decoration: BoxDecoration(
                 // color: Colors.blue,
-
                 // borderRadius: BorderRadius.circular(20)
               ),
               constraints: BoxConstraints.expand(height: 1),
@@ -93,19 +92,18 @@ class _ChatterScreenState extends State<ChatterScreen> {
           //   padding: const EdgeInsets.all(12.0),
           //   child: CircleAvatar(backgroundImage: NetworkImage('https://cdn.clipart.email/93ce84c4f719bd9a234fb92ab331bec4_frisco-specialty-clinic-vail-health_480-480.png'),),
           // ),
-          title: Row(
+          title: const Row(
             children: <Widget>[
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    'Chatter',
+                    'Virtual Assistant',
                     style: TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 16,
-                        color: Colors.deepPurple),
+                        color: Color(0xFF1B97F3)),
                   ),
-
                 ],
               ),
             ],
@@ -116,10 +114,6 @@ class _ChatterScreenState extends State<ChatterScreen> {
                 const PopupMenuItem(
                   value: 1,
                   child: Text("clear chat"),
-                ),
-                PopupMenuItem(
-                  value: 2,
-                  child: Text("Second item"),
                 ),
               ],
               onSelected: (value) {
@@ -136,6 +130,10 @@ class _ChatterScreenState extends State<ChatterScreen> {
           child: ListView(
             children: <Widget>[
               UserAccountsDrawerHeader(
+            currentAccountPicture: CircleAvatar(
+              backgroundImage: NetworkImage(chatController.getUser()?.photoUrl??"https://cdn.clipart.email/93ce84c4f719bd9a234fb92ab331bec4_frisco-specialty-clinic-vail-health_480-480.png"),
+          ),
+
                 decoration: BoxDecoration(
                   color: Colors.deepPurple[900],
                 ),
@@ -144,6 +142,9 @@ class _ChatterScreenState extends State<ChatterScreen> {
 
                 onDetailsPressed: () {},
               ),
+
+
+
               ListTile(
                 leading: Icon(Icons.exit_to_app),
                 title: Text("Logout"),

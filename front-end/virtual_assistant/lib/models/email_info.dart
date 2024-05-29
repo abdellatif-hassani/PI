@@ -12,9 +12,9 @@ class EmailInfo {
 
   factory EmailInfo.fromJson(Map<String, dynamic> json) {
     return EmailInfo(
-      to: json['to'],
-      subject: json['subject'],
-      message: json['message'],
+      to: json['to']?? "no destination",
+      subject: json['subject']??"no subject",
+      message: json['message']??"no message",
     );
   }
 
@@ -25,8 +25,12 @@ class EmailInfo {
       'message': message,
     };
   }
+  // @override
+  // String toString() {
+  //   return '${String.fromCharCode(0x1F4EC)}: $to \n ${String.fromCharCode(0x1f3af)}: $subject \n ${String.fromCharCode(0X1f4ac)}: $message';
+  // }
   @override
   String toString() {
-    return '${String.fromCharCode(0x1F4EC)}: $to \n ${String.fromCharCode(0x1f3af)}: $subject \n ${String.fromCharCode(0X1f4ac)}: $message';
+    return 'to: $to \n Subject $subject \n Body : $message';
   }
 }

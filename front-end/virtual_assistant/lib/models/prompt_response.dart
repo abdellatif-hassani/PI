@@ -1,31 +1,38 @@
+import 'package:virtual_assistant/models/method_to_use_type.dart';
 import 'package:virtual_assistant/models/prompt_response_type.dart';
 import 'package:virtual_assistant/pages/chat_page.dart';
-
 import 'calendar_info.dart';
 import 'email_info.dart';
 import 'jsonable.dart';
-class PromptResponse extends Jsonable{
-  final PromptResponseType typeAnswer;
-  final String answerText;
-  final EmailInfo? answerRelatedToGmail;
-  final CalendarInfo? answerRelatedToCalendar;
-  final String? methodToUse;
-  final bool? satisfied;
-  final bool? wantToCancel;
+class PromptResponse extends Jsonable {
+  PromptResponseType? typeAnswer;
+  String? answerText;
+  EmailInfo? answerRelatedToGmail;
+  CalendarInfo? answerRelatedToCalendar;
+  List<CalendarInfo>   listEventsCalendar;
+  MethodToUseType? methodToUse;
+  bool? satisfied;
+  bool? wantToCancel;
 
   PromptResponse({
-    required this.typeAnswer,
-    required this.answerText,
-    required this.answerRelatedToGmail,
-    required this.answerRelatedToCalendar,
-    required this.methodToUse,
-    required this.satisfied,
-    required this.wantToCancel,
+    this.typeAnswer,
+    this.answerText,
+    this.answerRelatedToGmail,
+    this.answerRelatedToCalendar,
+    this.methodToUse,
+    this.satisfied,
+    this.wantToCancel,
+    this.listEventsCalendar = const [],
   });
-
   factory PromptResponse.fromJson(Map<String, dynamic> json) {
+    MethodToUseType? methodToUse;
+    try {
+      methodToUse = MethodToUseType.values.byName(json['methodToUse']);
+    } catch (e) {
+      methodToUse=null;
+    }
     return PromptResponse(
-      typeAnswer:  PromptResponseType.values.byName(json['typeAnswer']),
+      typeAnswer: PromptResponseType.values.byName(json['typeAnswer']),
       answerText: json['answerText'],
       answerRelatedToGmail: json['answerRelatedToGmail'] != null
           ? EmailInfo.fromJson(json['answerRelatedToGmail'])
@@ -33,31 +40,48 @@ class PromptResponse extends Jsonable{
       answerRelatedToCalendar: json['answerRelatedToCalendar'] != null
           ? CalendarInfo.fromJson(json['answerRelatedToCalendar'])
           : null,
-      methodToUse: json['methodToUse'],
+      methodToUse: methodToUse,
       satisfied: json['satisfied'],
       wantToCancel: json['wantToCancel'],
+      listEventsCalendar: json['listEventsCalendar'] != null
+          ? List<CalendarInfo>.from(
+              json['listEventsCalendar'].map((x) => CalendarInfo.fromJson(x)))
+          : [],
     );
   }
-@override
+  @override
   Map<String, dynamic> toJson() {
     return {
-      'typeAnswer': PromptResponseType.values.indexOf(typeAnswer),
+      'typeAnswer': typeAnswer?.name,
       'answerText': answerText,
       'answerRelatedToGmail': answerRelatedToGmail?.toJson(),
-      'answerRelatedToCalendar':
-      answerRelatedToCalendar?.toJson(),
-      'methodToUse': methodToUse,
+      'answerRelatedToCalendar': answerRelatedToCalendar?.toJson(),
+      'methodToUse': methodToUse?.name,
       'satisfied': satisfied,
       'wantToCancel': wantToCancel,
     };
   }
   @override
   String toString() {
-    String messageText= answerText+"\n";
-    if(answerRelatedToCalendar != null) {
-      messageText= "$messageText ${answerRelatedToCalendar!.toString()}";
-    } else if(answerRelatedToGmail != null) {
-      messageText= "$messageText ${answerRelatedToGmail!.toString()}";
+    String messageText = answerText ?? "";
+    if(typeAnswer == PromptResponseType.calendar) {
+      if(methodToUse==MethodToUseType.get||methodToUse==MethodToUseType.searchByDate||methodToUse==MethodToUseType.searchByKeyword)
+        {
+          if(listEventsCalendar.isEmpty) {
+            messageText = "You have no events in your calendar";
+          } else {
+          messageText = "Here are your events: \n";
+          for (var event in listEventsCalendar) {
+            messageText += event.toString() + "\n---------------\n";
+          }
+        }
+    }else if(methodToUse==MethodToUseType.create){
+      messageText  ="$messageText \n ${answerRelatedToCalendar?.toString()}";
+    }
+    } else if (typeAnswer == PromptResponseType.email) {
+      if (methodToUse == MethodToUseType.send) {
+        messageText = "$messageText \n ${answerRelatedToGmail?.toString()}";
+      }
     }
     return messageText;
   }

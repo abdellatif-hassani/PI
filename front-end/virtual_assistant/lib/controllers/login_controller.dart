@@ -18,34 +18,6 @@ class LoginController with ChangeNotifier {
   UserService userService = UserService();
   LoginService loginService;
    LoginController({required this.loginService});
-  // Future login(BuildContext context) async {
-  //   _loginData.status = Status.LOADING;
-  //   notifyListeners();
-  //   user = await userService.getUser();
-  //   if (user != null) {
-  //     navigateToChat(context);
-  //     return;
-  //   } else {
-  //     _loginData.data ??= await loginService.signInWithGoogle();
-  //
-  //     if (loginData.data?.authentication != null) {
-  //       GoogleSignInAuthentication googleAuth =
-  //           await _loginData.data!.authentication;
-  //       String? idToken = googleAuth.idToken;
-  //       String? refreshToken = googleAuth.accessToken;
-  //       user = googleSignInAccountToUser(
-  //           _loginData.data!, idToken!, refreshToken!);
-  //       loginData.status = Status.SUCCESS;
-  //       navigateToChat(context);
-  //       if (user != null) userService.saveUser(user!);
-  //     } else {
-  //       loginData.status = Status.ERORR;
-  //       showErrorSnackBar(context, "Error has accured while login in");
-  //     }
-  //   }
-  //
-  //   notifyListeners();
-  // }
 
   Future logout() async {
     await StorageService.instance.clear();
@@ -78,16 +50,6 @@ class LoginController with ChangeNotifier {
   }
 
 
-  // checkUserAlreadyLoggedIn(BuildContext context) async {
-  //   user = await userService.getUser();
-  //   if (user != null) {
-  //     Navigator.push(
-  //         context,
-  //         MaterialPageRoute(
-  //             builder: (BuildContext context) =>
-  //                 Chatr()));
-  //   }    }
-  //}
     void navigateToChat(BuildContext context) {
       Navigator.pushReplacement(
           context,
@@ -112,6 +74,7 @@ class LoginController with ChangeNotifier {
       Map<String, String> authHeaders = await _loginData.data!.authHeaders;
       setUser(googleSignInAccountToUser(
           _loginData.data!, authHeaders['Authorization']!.split(" ")[1], ""));
+      print(" HIIIIII${authHeaders['Authorization']!.split(" ")[1]}");
       await userService.saveUser(user!);
       return true;
     }

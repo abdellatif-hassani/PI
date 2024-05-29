@@ -32,6 +32,7 @@ class ChatterApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Chatter',
         theme: ThemeData(
+          primaryColor: Color(0xFF1B97F3),
           textTheme: TextTheme(
             bodyLarge: TextStyle(
               fontFamily: 'Poppins',
@@ -39,7 +40,6 @@ class ChatterApp extends StatelessWidget {
           ),
         ),
          home: StarterPage(),
-
       ),
     );
   }

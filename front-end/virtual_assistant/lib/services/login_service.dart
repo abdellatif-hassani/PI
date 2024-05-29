@@ -3,7 +3,7 @@ import 'package:virtual_assistant/exceptions/authentication_exception.dart';
 import 'package:virtual_assistant/models/user.dart';
 
 class LoginService {
-  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email',  "https://www.googleapis.com/auth/contacts.readonly"],clientId: "426322832792-i9frut2ssb3uu29vilivn0t148h09rdu.apps.googleusercontent.com");
+  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email',"https://www.googleapis.com/auth/gmail.modify","https://www.googleapis.com/auth/calendar","https://www.googleapis.com/auth/calendar.events"],clientId: "426322832792-i9frut2ssb3uu29vilivn0t148h09rdu.apps.googleusercontent.com");
 
   GoogleSignInAccount? _user;
 

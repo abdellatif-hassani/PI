@@ -12,7 +12,7 @@ class HttpChatService extends IChatService {
   HttpChatService({required this.token,required this.url}) {
     headers = {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token',
+
     };
   }
   final String url;
@@ -23,14 +23,19 @@ class HttpChatService extends IChatService {
 
 
   @override
-  Future<HttpResponse<PromptResponse>> sendMessage(Message message)async{
+  Future<HttpResponse<PromptResponse>> sendMessage(Message message,String token)async{
 
     final body = jsonEncode({
       'message': message.message,
     });
-    final uri = Uri.parse("https://run.mocky.io/v3/861eeb39-822a-4dcd-bd55-90daecf8d3ac");
+    print(body);
+    headers.addAll({
+      'Authorization': 'Bearer $token'
+    });
+    print(headers);
+    final uri = Uri.parse("$url/prompt");
 
-    final response = await client.post(uri, headers: headers, body: body);
+    final response = await client.post(uri, headers: headers, body: body).timeout(const Duration(seconds: 15));
     if (response.statusCode == 200) {
       print(response.body);
       return HttpResponse<PromptResponse>(
@@ -41,13 +46,20 @@ class HttpChatService extends IChatService {
       print(response.statusCode);
       return HttpResponse<PromptResponse>(
           statusCode: response.statusCode,
-          error: jsonDecode(response.body)['message']+" "+response.statusCode.toString());
+          error: jsonDecode(response.body)['message']);
     }
   }
-  Future<HttpResponse<PromptResponse>> sendRePromptRequest(PromptRequest promptRequest) async {
-    final uri = Uri.parse('https://run.mocky.io/v3/084fe7e5-b153-4a7b-aa01-bbe757288c09');
+  Future<HttpResponse<PromptResponse>> sendRePromptRequest(PromptRequest promptRequest,String token) async {
+    final uri = Uri.parse("$url/reprompt");
+    headers.addAll({
+      'Authorization': 'Bearer $token'
+    });
+    print(headers);
+
     final body = jsonEncode(promptRequest.toJson());
-    final response = await client.post(uri, headers: headers, body: body);
+    print(body);
+
+    final response = await client.post(uri, headers: headers, body: body).timeout(const Duration(seconds: 15));
     if (response.statusCode == 200) {
       print(response.body);
       return HttpResponse<PromptResponse>(
@@ -57,25 +69,10 @@ class HttpChatService extends IChatService {
       //if request return fail
       return HttpResponse<PromptResponse>(
           statusCode: response.statusCode,
-          error: jsonDecode(response.body)['message']+" "+response.statusCode.toString());
+          error: jsonDecode(response.body).toString());
     }
   }
-  Future sendToExecutePromptRequest(PromptResponse promptResponse) async {
-    final uri = Uri.parse('$url/messages');
-    final body = jsonEncode(promptResponse.toJson());
-    final response = await client.post(uri, headers: headers, body: body);
-    if (response.statusCode == 200) {
-      print(response.body);
-      return HttpResponse<PromptResponse>(
-          statusCode: response.statusCode,
-          data: PromptResponse.fromJson(jsonDecode(response.body)));
-    } else {
-      //if request return fail
-      return HttpResponse<PromptResponse>(
-          statusCode: response.statusCode,
-          error: jsonDecode(response.body)['message']+" "+response.statusCode.toString());
-    }
-  }
+
 
 
 }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -9,6 +10,7 @@ import 'package:hive/hive.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:virtual_assistant/models/attachement.dart';
 import 'package:virtual_assistant/models/data.dart';
+import 'package:virtual_assistant/models/method_to_use_type.dart';
 import 'package:virtual_assistant/models/prompt_request.dart';
 import 'package:virtual_assistant/models/prompt_response.dart';
 import 'package:virtual_assistant/models/prompt_response_type.dart';
@@ -60,45 +62,45 @@ class ChatController with ChangeNotifier {
     Message message = Message(message: messageText,attachments: attachments);
     storageService.saveMessage(message);
     try {
-       HttpResponse<PromptResponse>? promptResponse;
-
-      if(lastPrompt!=null){
-        PromptRequest lastPromptRequest=PromptRequest(promptResponse: lastPrompt!, userText: messageText);
-        promptResponse=await chatService.sendRePromptRequest(lastPromptRequest);
-      }else
-        promptResponse = await chatService.sendMessage(message);
-
-      // message.isSent = true;
-      // await storageService.updateLastMessage(message);
-      notifyListeners();
-      if (promptResponse.data != null) {
-        lastPrompt = promptResponse.data;
-
-          if (promptResponse.data!.typeAnswer==PromptResponseType.message|| promptResponse.data!.wantToCancel != promptResponse.data!.satisfied ) {
-          lastPrompt=null;
-            if (promptResponse.data!.satisfied == true) {
-              chatService.sendToExecutePromptRequest(promptResponse.data!);
-              storageService.saveMessage(
-                  Message(message: "Request Sended", isSender: false));
-            }else
-              storageService.saveMessage(
-                  Message(message: "Request Cancled", isSender: false));
-          }else{
-            storageService.saveMessage(
-                Message(message: promptResponse.data!.toString(), isSender: false));
-          }
-
-
-
+      HttpResponse<PromptResponse>? promptResponse;
+      if (lastPrompt == null) {
+        promptResponse =
+        await chatService.sendMessage(message, user.data!.tokenId);
       } else {
-        storageService.saveMessage(
-            Message(message:"error is occured", isSender: false));
+        promptResponse = await chatService.sendRePromptRequest(
+            PromptRequest(promptResponse: lastPrompt!, userText: messageText),
+            user.data!.tokenId);
       }
-    } catch (e) {
-      storageService
-          .saveMessage(Message(message: e.toString(), isSender: false));
+      lastPrompt = promptResponse.data;
+      if (promptResponse.statusCode == 200) {
+        if (promptResponse.data!.typeAnswer == PromptResponseType.message ||
+            promptResponse.data!.methodToUse != MethodToUseType.create || promptResponse.data!.methodToUse != MethodToUseType.send) {
+          lastPrompt = null;
+          storageService.saveMessage(Message(
+              message: promptResponse.data.toString(), isSender: false));
+        } else if (promptResponse.data!.satisfied != true) {
+          storageService.saveMessage(Message(
+              message: promptResponse.data.toString(), isSender: false));
+        } else if (promptResponse.data!.satisfied == true) {
+          lastPrompt = null;
+          storageService.saveMessage(
+              Message(message: "your request is Sent", isSender: false)
+          );
+        }
+      } else {
+        lastPrompt = null;
+        storageService.saveMessage(
+            Message(message: promptResponse.error, isSender: false)
+        );
+      }
     }
-    await Future.delayed(const Duration(seconds: 1));
+    catch (e) {
+      lastPrompt = null;
+      if(e is SocketException)
+        storageService.saveMessage(Message(message: "No internet connection", isSender: false));
+        else
+        storageService.saveMessage(Message(message: e.toString(), isSender: false));
+    }
     _status = Status.SUCCESS;
     notifyListeners();
   }

@@ -7,7 +7,7 @@ class PromptRequest {
   PromptRequest({required this.promptResponse, required this.userText});
   Map<String, dynamic> toJson() {
     return {
-      'prompt': promptResponse.toJson(),
+      'promptResponse': promptResponse.toJson(),
       'userText': userText,
     };
   }

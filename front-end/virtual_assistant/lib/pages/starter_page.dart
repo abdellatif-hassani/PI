@@ -33,15 +33,11 @@ class _StarterPageState extends State<StarterPage> {
                 children: [
                   Hero(
                     tag: 'heroicon',
-                    child: Icon(
-                      Icons.textsms,
-                      size: 1* 100,
-                      color: Colors.deepPurple[900],
-                    ),
+                    child: Image.asset("assets/logo.png",width: 160,)
             
                   ),
                   SizedBox(height: 20),
-                  CircularProgressIndicator(),
+                  CircularProgressIndicator(color:  Color(0xFF2E58FF)),
                 ],
               ),
             ),
