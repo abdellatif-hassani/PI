@@ -1,6 +1,7 @@
 package com.example.promp_gpt.controller;
 
 import com.example.promp_gpt.entities.EventEntity;
+import com.example.promp_gpt.entities.EventEntityWithoutKeyWord;
 import com.example.promp_gpt.entities.PromptResponse;
 import com.example.promp_gpt.entities.RePromptRequest;
 import com.example.promp_gpt.exception.SomeThingWentWrongException;
@@ -28,11 +29,9 @@ public class OpenAiController {
         String BearerToken = httpServletRequest.getHeader("Authorization");
         String token = BearerToken.substring(7);
         PromptResponse promptResponse =openAiService.getPrompt(message, PromptString.systemText_Prompt);
-        System.out.println("****************"+promptResponse);
        promptResponse.setSatisfied(false);
        promptResponse.setWantToCancel(false);
 
-        System.out.println("************************************test********************************************");
         promptResponse.setSatisfied(false);
         promptResponse.setWantToCancel(false);
         if (promptResponse.getMethodToUse()!=null ){
@@ -42,14 +41,18 @@ public class OpenAiController {
                 if (!(promptResponse.getMethodToUse().equals("deleteByKeyword") || promptResponse.getMethodToUse().equals("deleteByDate")))
                 {
                     List<EventEntity> listEvents= (List<EventEntity>)openAiService.sendToTheCorrectService(promptResponse, token);
-
                     listEvents.forEach(eventEntity -> {
                         promptResponse.getListEventsCalendar().add(eventEntity);
                     });
-                }else{
-                    return openAiService.sendToTheCorrectService(promptResponse, token);
                 }
+                else if ( promptResponse.getMethodToUse().equals("deleteByKeyword") || promptResponse.getMethodToUse().equals("deleteByDate")){
+                    openAiService.sendToTheCorrectService(promptResponse, token);
+                    PromptResponse newPromptResponse = new PromptResponse();
+                    newPromptResponse.setTypeAnswer("message");
+                    newPromptResponse.setAnswerText("The event has been deleted successfully");
+                    return newPromptResponse;
 
+                }
 
             }
         }
@@ -63,7 +66,8 @@ public class OpenAiController {
         String token = BearerToken.substring(7);
         System.out.println(rePromptRequest+"hello");
         if (rePromptRequest.getPromptResponse().getSatisfied()!=null && rePromptRequest.getPromptResponse().getSatisfied()==true) {
-            return openAiService.sendToTheCorrectService(rePromptRequest.getPromptResponse(), token);
+             openAiService.sendToTheCorrectService(rePromptRequest.getPromptResponse(), token);
+             return rePromptRequest.getPromptResponse();
 
         } else {
             PromptResponse promptResponse = null;
@@ -74,20 +78,23 @@ public class OpenAiController {
             else if (rePromptRequest.getPromptResponse().getTypeAnswer().equals("calendar"))
             {
                 promptResponse= openAiService.getRePrompt(rePromptRequest.getPromptResponse(), rePromptRequest.getUserText(), PromptString.systemText_RePrompt_Calendar);
-                System.out.println("*********helllo"+promptResponse);
+
             }
             if (promptResponse!=null && promptResponse.getSatisfied()==true) {
-                Object t=openAiService.sendToTheCorrectService(promptResponse, token);
-                System.out.println(t);
 
-                return openAiService.sendToTheCorrectService(promptResponse, token);
+                 openAiService.sendToTheCorrectService(promptResponse, token);
+                 return promptResponse;
 
             }
             if (promptResponse!=null)
                 return promptResponse;
             else
-                throw new SomeThingWentWrongException("Something went wrong");
-
+            {
+                PromptResponse newPromptResponse = new PromptResponse();
+                newPromptResponse.setTypeAnswer("message");
+                newPromptResponse.setAnswerText("The was an error in the system, please try again later");
+                return newPromptResponse;
+            }
         }
     }
 }

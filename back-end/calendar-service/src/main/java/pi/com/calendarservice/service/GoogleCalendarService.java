@@ -141,6 +141,7 @@ public class GoogleCalendarService {
 
     public List<EventDto> searchEventsByDate(String accessToken, LocalDate date) throws IOException, GeneralSecurityException {
         // Convert LocalDate to Date for API query
+        // Convert LocalDate to Date for API query
         Date startDate = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date endDate = Date.from(date.atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant());
         System.out.println("Start date: " + startDate);
@@ -154,10 +155,10 @@ public class GoogleCalendarService {
         // Define the query parameters for searching events
         Events events = service.events().list("primary")
                 .setTimeMin(new DateTime(startDate))
-                .setTimeMax(new DateTime(endDate))
                 .execute();
 
-        throw new NotFoundException("Event not found");
+        return EventMapper.toEventDtos(events.getItems());
+
     }
 
 
