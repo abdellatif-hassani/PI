@@ -11,4 +11,10 @@ docker tag pi-gpt_server abderrazzaknouari/pi-gpt_server:latest
 docker push abderrazzaknouari/pi-gpt_server:latest
 
 docker tag pi-gateway abderrazzaknouari/pi-gateway:latest
- docker push abderrazzaknouari/pi-gateway:latest
+docker push abderrazzaknouari/pi-gateway:latest
+
+
+
+
+
+ng build --configuration production

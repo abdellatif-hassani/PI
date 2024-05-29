@@ -80,8 +80,14 @@ public class PromptString {
             Based on typical user modifications, set the attributes here is some examples :
             - If the modification is 'just forget it', set 'satisfied' to False and 'wantToCancel' to True.
             - If the modification is 'send the email', set 'satisfied' to True and 'wantToCancel' to False.
-                        
-            Please adjust the 'answerRelatedToGmail' part of the JSON object accordingly and generate the updated JSON object with the new structure:
+            - If the modification is 'cancel it', set 'satisfied' to False and 'wantToCancel' to True.
+            - If the modification is 'send it', set 'satisfied' to True and 'wantToCancel' to False.
+            - If the modification is 'change ...', set 'satisfied' to false and 'wantToCancel' to False.
+            - If the modification is 'modify ...', set 'satisfied' to false and 'wantToCancel' to False.
+            - If the modification requesting some changes or modifications, set 'satisfied' to false and 'wantToCancel' to False.
+            - If the user doesn't want to send it anymore, set 'satisfied' to false and 'wantToCancel' to True. 
+                      
+            Please adjust the 'answerRelatedToGmail' part of the JSON object accordingly and generate the updated JSON object with the new structure and return just the json Object:
 
               "typeAnswer": "email",
               "answerRelatedToGmail": 
@@ -91,7 +97,10 @@ public class PromptString {
               ,
               "methodToUse": "send",
               "satisfied": "false or true",
-              "wantToCancel": "false or true"        
+              "wantToCancel": "false or true"     
+                 
+                 
+            IMPORTANT NOTE : answer with just the JSON object and respect please the form of JSON object , and please focus with me and return what I instructed for  
             """;
     public static final  String systemText_RePrompt_Calendar ="""
             We are developing a chat application to help users manage their Calendar events interactions, such as adding events. We use JSON objects to structure these interactions based on user inputs.
@@ -112,9 +121,15 @@ public class PromptString {
             here is some examples to give you an idea about the modification:
             - If the modification is 'just forget it', set 'satisfied' to False and 'wantToCancel' to True.
             - If the modification is 'add the event', set 'satisfied' to True and 'wantToCancel' to False.
+            - If the modification is 'add it', set 'satisfied' to True and 'wantToCancel' to False.
+            - If the modification is 'cancel it', set 'satisfied' to False and 'wantToCancel' to True.
             - If the modification is 'make change to startTime to 20/05/2024 ', set 'satisfied' to False and 'wantToCancel' to False.
             - If the modification is 'make the summary be Enset Event ', set 'satisfied' to False and 'wantToCancel' to False.
             - If the modification is 'OK ', set 'satisfied' to True and 'wantToCancel' to False.
+            - If the modification is 'change ...', set 'satisfied' to false and 'wantToCancel' to False.
+            - If the modification is 'modify ...', set 'satisfied' to false and 'wantToCancel' to False.
+            - If the modification requesting some changes or modifications, set 'satisfied' to false and 'wantToCancel' to False.
+            - If the user doesn't want to send it anymore, set 'satisfied' to false and 'wantToCancel' to True.  
                         
             Please adjust the 'answerRelatedToCalendar' part of the JSON object,You  should respond with an object with this structure:
 
@@ -131,6 +146,6 @@ public class PromptString {
               "satisfied": "false or true",
               "wantToCancel": "false or true"     
 
-              to make sure that you please answer with the JSON object and respect please the form of JSON object , and please focus with me and return what I instructed for  
+             IMPORTANT NOTE : answer with just the JSON object and respect please the form of JSON object , and please focus with me and return what I instructed for  
             """;
 }
