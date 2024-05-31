@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment'; 
 import { AuthConfig, OAuthService } from 'angular-oauth2-oidc';
 import { interval, Observable, Subscription } from 'rxjs';
 import { switchMap, catchError, filter } from 'rxjs/operators';
@@ -16,13 +17,7 @@ export class AuthGoogleService {
   }
 
   initConfiguration() {
-    const authConfig: AuthConfig = {
-      issuer: 'https://accounts.google.com',
-      strictDiscoveryDocumentValidation: false,
-      redirectUri: window.location.origin + '/test',
-      clientId: '620536565122-91ob5s78lu1t6pjcl2tbb0v0rdban5cj.apps.googleusercontent.com',
-      scope: 'openid profile email https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/gmail.modify',
-    };
+    const authConfig: AuthConfig = environment.authConfig;
 
     this.oAuthService.configure(authConfig);
     this.oAuthService.setupAutomaticSilentRefresh();
