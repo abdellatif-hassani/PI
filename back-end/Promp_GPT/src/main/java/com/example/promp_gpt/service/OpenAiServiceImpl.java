@@ -64,7 +64,6 @@ public class OpenAiServiceImpl implements OpenAiService {
         PromptResponse response = objectMapper.readValue(jsonResponse, new TypeReference<PromptResponse>() {});
 
         return response;
-
     }
 
     @Override
@@ -91,13 +90,18 @@ public class OpenAiServiceImpl implements OpenAiService {
             GmailApiDto gmailApiDto = promptResponse.getAnswerRelatedToGmail();
             return sendToTheGemailService(gmailApiDto,promptResponse.getMethodToUse(),token);
         } else if (promptResponse.getTypeAnswer().equals("calendar")) {
-
+            System.out.println(promptResponse);
             System.out.println(promptResponse.getAnswerRelatedToCalendar());
             EventEntity eventEntity = promptResponse.getAnswerRelatedToCalendar();
-            if ( promptResponse.getAnswerRelatedToCalendar()==null || promptResponse.getAnswerRelatedToCalendar().getKeyword()==null)
 
-                return sendToTheCalenderService(eventEntity,promptResponse.getMethodToUse(),token,null);
-            return sendToTheCalenderService(eventEntity,promptResponse.getMethodToUse(),token,promptResponse.getAnswerRelatedToCalendar().getKeyword());
+            if (promptResponse.getAnswerRelatedToCalendar()!=null) {
+                if (promptResponse.getAnswerRelatedToCalendar().getKeyword() == null)
+                    return sendToTheCalenderService(eventEntity, promptResponse.getMethodToUse(), token, null);
+                else
+                    return sendToTheCalenderService(eventEntity, promptResponse.getMethodToUse(), token, promptResponse.getAnswerRelatedToCalendar().getKeyword());
+            }else
+                return sendToTheCalenderService(eventEntity, promptResponse.getMethodToUse(), token, null);
+
         } else if (promptResponse.getTypeAnswer().equals("message")) {
             return promptResponse.getAnswerText();
         }
@@ -116,7 +120,6 @@ public class OpenAiServiceImpl implements OpenAiService {
     }
     @Override
     public Object sendToTheCalenderService(EventEntity eventEntity,String methodToUse,String token,String keyword) throws SomeThingWentWrongException{
-            System.out.println("***********" + token);
 
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
@@ -150,7 +153,7 @@ public class OpenAiServiceImpl implements OpenAiService {
                     String end = dateFormat.format(date);
                     eventEntity.setEndTime(end+":00+01:00");
                 }
-                System.out.println("***********" + eventEntity);
+
                 execute = calendarClient.setEvent("Bearer " + token, eventEntity);
             } else if (methodToUse.equals("deleteByKeyword")) {
                 return calendarClient.deleteEventBySummary("Bearer " + token, eventEntity.getKeyword());

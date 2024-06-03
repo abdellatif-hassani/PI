@@ -33,6 +33,11 @@
   margin: 0;
 }
 
+.send-btn:hover{
+  background-color: #11b7cd;
+  color: white;
+}
+
   .chat-input {
     flex: 1; /* Allow the input to take up as much space as possible */
     margin-right: 8px;
@@ -90,4 +95,13 @@
 .delete-history-btn:hover {
   background-color: #083b47;
   color: white;
+}
+
+
+.successSend{
+  color: #027c21;
+}
+
+.verifyOperation{
+  color: #ea720a;
 }

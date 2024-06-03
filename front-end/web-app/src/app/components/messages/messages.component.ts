@@ -1,65 +1,124 @@
-import { Component, ElementRef, ViewChild, OnInit } from '@angular/core';
+import { Component, ElementRef, ViewChild, OnInit, AfterViewInit, QueryList, ViewChildren } from '@angular/core';
 import { AuthGoogleService } from '../../services/auth-google.service';
 import { ApiService } from '../../services/api.service';
-import { AnyResponse, MessageResponse, PromptResponse, EmailResponse, CalendarResponse, RePromptRequest } from '../../models/response-types';
+import { CalendarDetails, AnyResponse, MessageResponse, PromptResponse, EmailResponse, CalendarResponse, RePromptRequest } from '../../models/response-types';
 import { isMessageResponse, isEmailResponse, isCalendarResponse } from '../../helpers/response-type-guards';
+
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-messages',
   templateUrl: './messages.component.html',
   styleUrls: ['./messages.component.css']
 })
-export class MessagesComponent implements OnInit {
-  requestsAndResponses: { prompt: string, response: AnyResponse, isEmailBeingSent?: boolean, isRequestTraited?: boolean }[] = [];
+export class MessagesComponent implements OnInit, AfterViewInit {
+  requestsAndResponses: { 
+    prompt: string, 
+    response: AnyResponse, 
+    isEmailBeingSent?: boolean, 
+    isRequestTraited?: boolean,
+    dataSource?: MatTableDataSource<CalendarDetails> 
+  }[] = [];
+  
   prompt: string = '';
   token: string = '';
   user: any = '';
   isFirstRequest: boolean = true;
 
   @ViewChild('messagesContainer') messagesContainer!: ElementRef;
+  @ViewChildren(MatPaginator) paginators!: QueryList<MatPaginator>;
+  @ViewChildren(MatSort) sorts!: QueryList<MatSort>;
+
+  displayedColumns: string[] = ['summary', 'location', 'description', 'startTime', 'endTime'];
 
   constructor(
     private authService: AuthGoogleService,
     private apiService: ApiService
   ) {
-    // this.initializeRequestsAndResponses();
     this.disableButton();
   }
 
   ngOnInit(): void {
-    this.loadMessages();
     this.user = this.authService.getProfile();
+    console.log('User profile:', this.user); // Debugging statement
+    this.loadMessages();
+    this.isFirstRequest = true;
+  }
+
+  ngAfterViewInit() {
+    this.setPaginatorsAndSorts();
+    this.paginators.changes.subscribe(() => this.setPaginatorsAndSorts());
+    this.sorts.changes.subscribe(() => this.setPaginatorsAndSorts());
+  }
+
+  private setPaginatorsAndSorts() {
+    if (this.paginators.length === this.requestsAndResponses.length) {
+      this.requestsAndResponses.forEach((item, index) => {
+        if (item.dataSource) {
+          item.dataSource.paginator = this.paginators.toArray()[index];
+          item.dataSource.sort = this.sorts.toArray()[index];
+        }
+      });
+    }
+  }
+
+  updateTableData(response: CalendarResponse, index: number) {
+    if (response.listEventsCalendar) {
+      const dataSource = new MatTableDataSource<CalendarDetails>(response.listEventsCalendar);
+      this.requestsAndResponses[index].dataSource = dataSource;
+      if (this.paginators.toArray().length > index) {
+        dataSource.paginator = this.paginators.toArray()[index];
+      }
+      if (this.sorts.toArray().length > index) {
+        dataSource.sort = this.sorts.toArray()[index];
+      }
+    }
+  }
+
+  loadMessages() {
+    const data = localStorage.getItem('requestsAndResponses');
+    if (data) {
+      const parsedData = JSON.parse(data);
+      this.requestsAndResponses = parsedData.map((item: any) => ({
+        ...item,
+        dataSource: isCalendarResponse(item.response) ? new MatTableDataSource<CalendarDetails>(item.response.listEventsCalendar) : undefined
+      }));
+      this.requestsAndResponses.forEach((item, index) => {
+        if (isCalendarResponse(item.response)) {
+          this.updateTableData(item.response, index);
+        }
+      });
+    }
   }
 
   async makeAcall() {
     if (this.isFirstRequest) {
       try {
         await this.sendRequest();
-        console.log("******:" + this.getLastResponse()?.typeAnswer);
-        console.log("******:" + this.getLastResponse());
-        console.log("******:" + this.requestsAndResponses[0]);
         if (this.getLastResponse() != undefined 
             && !this.getLastResponse()?.satisfied 
-            && this.getLastResponse()?.typeAnswer!='message'){
+            && this.getLastResponse()?.typeAnswer !== 'message'
+            && this.isNotList(this.getLastResponse() as AnyResponse)) {
           this.isFirstRequest = false;
-          console.log('isFirstRequest:', this.isFirstRequest);
-          console.log('Satisfied :', this.getLastResponse()?.satisfied);
         }
       } catch (error) {
         console.error('Error in sendRequest:', error);
       }
     } else {
-      console.log('RESEND : isFirstRequest:', this.isFirstRequest);
-      console.log('RESEND : request :', this.getLastResponse()?.satisfied);
-      this.reSendRequest();
-      const result = this.getLastResponse();
-      if (result?.satisfied || result?.wantToCancel) {
-        this.isFirstRequest = true;
+      try {
+        await this.reSendRequest();
+        const result = this.getLastResponse();
+        console.log('result***********:', result);
+        if (result?.satisfied || result?.wantToCancel) {
+          this.isFirstRequest = true;
+        }
+      } catch (error) {
+        console.error('Error in reSendRequest:', error);
       }
     }
-    console.log('makeAcall : ' + this.isFirstRequest);
   }
-  
 
   sendRequest(): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -73,9 +132,18 @@ export class MessagesComponent implements OnInit {
       this.token = this.authService.getToken() as string;
       this.apiService.sendRequest(this.prompt, this.token).subscribe(
         response => {
+          if(response.methodToUse === 'get' || response.methodToUse === 'searchByKeyword'
+            || response.methodToUse === 'searchByDate') {
+            this.isFirstRequest = true;
+          }
           const formattedResponse = this.formatResponse(response);
           if (formattedResponse) {
-            this.requestsAndResponses.push({ prompt: this.prompt, response: formattedResponse });
+            const requestAndResponse = { prompt: this.prompt, response: formattedResponse };
+            this.requestsAndResponses.push(requestAndResponse);
+            const index = this.requestsAndResponses.length - 1;
+            if (isCalendarResponse(formattedResponse)) {
+              this.updateTableData(formattedResponse, index);
+            }
             this.saveMessages();
             this.prompt = '';
             this.scrollToBottom();
@@ -85,42 +153,55 @@ export class MessagesComponent implements OnInit {
         error => {
           console.error('Error:', error);
           this.prompt = '';
+          this.disableButton();
           reject(error);
         }
       );
     });
   }
-  
 
-  reSendRequest() {
-    if (!this.prompt.trim()) {
-      console.error('Prompt cannot be empty');
-      return;
-    }
-
-    this.token = this.authService.getToken() as string;
-    const lastResponse = this.getLastResponse() as PromptResponse;
-    this.apiService.sendRequestToReprompt(lastResponse, this.prompt, this.token).subscribe(
-      response => {
-        const formattedResponse = this.formatResponse(response);
-        if (formattedResponse) {
-          if(formattedResponse.satisfied) {
-            this.requestsAndResponses.push({ prompt: this.prompt, response: formattedResponse, isRequestTraited: true, isEmailBeingSent: true});
-            console.log("*******"+this.requestsAndResponses);
-          }else {
-            this.requestsAndResponses.push({ prompt: this.prompt, response: formattedResponse });
-          }
-          this.saveMessages();
-          this.prompt = '';
-          this.scrollToBottom();
-        }
-      },
-      error => {
-        console.error('Error:', error);
-        this.prompt = '';
+  reSendRequest(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (!this.prompt.trim()) {
+        console.error('Prompt cannot be empty');
+        return reject('Prompt cannot be empty');
       }
-    );
-    this.disableButton();
+  
+      this.token = this.authService.getToken() as string;
+      const lastResponse = this.getLastResponse() as PromptResponse;
+      this.apiService.sendRequestToReprompt(lastResponse, this.prompt, this.token).subscribe(
+        response => {
+          if (response.methodToUse === 'get' || response.methodToUse === 'searchByKeyword' || response.methodToUse === 'searchByDate') {
+            this.isFirstRequest = true;
+          }
+          const formattedResponse = this.formatResponse(response);
+          if (formattedResponse) {
+            let requestAndResponse;
+            if(formattedResponse.satisfied)
+               requestAndResponse = { prompt: this.prompt, response: formattedResponse, isEmailBeingSent: true};
+            else
+                requestAndResponse = { prompt: this.prompt, response: formattedResponse};
+            this.requestsAndResponses.push(requestAndResponse);
+            const index = this.requestsAndResponses.length - 1;
+            if (isCalendarResponse(formattedResponse)) {
+              this.updateTableData(formattedResponse, index);
+            }
+            this.saveMessages();
+            this.prompt = '';
+            this.scrollToBottom();
+            this.disableButton();
+          }
+          resolve();
+        },
+        error => {
+          console.error('Error:', error);
+          this.prompt = '';
+          this.disableButton();
+          reject(error);
+        }
+      );
+      this.disableButton();
+    });
   }
 
   confirmEmail(response: AnyResponse, i: number) {
@@ -132,7 +213,8 @@ export class MessagesComponent implements OnInit {
 
       this.apiService.sendEmail(rePromptRequest, this.token).subscribe(
         res => {
-          this.requestsAndResponses.push({ prompt: '', response: res, isEmailBeingSent: true});
+          res.satisfied = true;
+          this.requestsAndResponses.push({ prompt: '', response: res, isEmailBeingSent: true });
           this.disableButton();
           this.isFirstRequest = true;
           this.saveMessages();
@@ -142,13 +224,13 @@ export class MessagesComponent implements OnInit {
         error => {
           console.error('Error sending email:', error);
           this.prompt = '';
+          this.disableButton();
         }
       );
     } else {
       console.error('Provided response is not an email response:', response);
     }
   }
-
 
   addToCalendar(response: AnyResponse, i: number) {
     if (isCalendarResponse(response)) {
@@ -159,8 +241,7 @@ export class MessagesComponent implements OnInit {
 
       this.apiService.sendEmail(rePromptRequest, this.token).subscribe(
         res => {
-          this.requestsAndResponses.push({ prompt: '', response: res, isRequestTraited: true, isEmailBeingSent: true});
-          console.log("*******"+i);
+          this.requestsAndResponses.push({ prompt: '', response: res, isRequestTraited: true, isEmailBeingSent: true });
           this.requestsAndResponses[i].isRequestTraited = true;
           this.disableButton();
           this.isFirstRequest = true;
@@ -171,6 +252,7 @@ export class MessagesComponent implements OnInit {
         error => {
           console.error('Error adding to calendar:', error);
           this.prompt = '';
+          this.disableButton();
         }
       );
     } else {
@@ -178,92 +260,67 @@ export class MessagesComponent implements OnInit {
     }
   }
 
-
-
   scrollToBottom() {
     this.messagesContainer.nativeElement.scrollTop = this.messagesContainer.nativeElement.scrollHeight;
   }
 
   saveMessages() {
-    localStorage.setItem('requestsAndResponses', JSON.stringify(this.requestsAndResponses));
+    const serializableData = this.requestsAndResponses.map(item => ({
+      prompt: item.prompt,
+      response: this.serializeResponse(item.response),
+      isEmailBeingSent: item.isEmailBeingSent,
+      isRequestTraited: item.isRequestTraited
+    }));
+    localStorage.setItem('requestsAndResponses', JSON.stringify(serializableData));
   }
 
-  loadMessages() {
-    const data = localStorage.getItem('requestsAndResponses');
-    if (data) {
-      this.requestsAndResponses = JSON.parse(data);
+  serializeResponse(response: AnyResponse): AnyResponse {
+    if (isCalendarResponse(response)) {
+      return {
+        typeAnswer: response.typeAnswer,
+        methodToUse: response.methodToUse,
+        satisfied: response.satisfied,
+        wantToCancel: response.wantToCancel,
+        answerRelatedToCalendar: response.answerRelatedToCalendar,
+        listEventsCalendar: response.listEventsCalendar
+      } as CalendarResponse;
+    } else if (isEmailResponse(response)) {
+      return {
+        typeAnswer: response.typeAnswer,
+        methodToUse: response.methodToUse,
+        satisfied: response.satisfied,
+        wantToCancel: response.wantToCancel,
+        answerRelatedToGmail: response.answerRelatedToGmail
+      } as EmailResponse;
+    } else if (isMessageResponse(response)) {
+      return {
+        typeAnswer: response.typeAnswer,
+        methodToUse: response.methodToUse,
+        satisfied: response.satisfied,
+        wantToCancel: response.wantToCancel,
+        answerText: response.answerText
+      } as MessageResponse;
+    } else {
+      console.error('Unexpected response type:', response);
+      return response;
     }
   }
 
   deleteHistory() {
-    localStorage.removeItem('requestsAndResponses');
+    if(localStorage.getItem('requestsAndResponses')){
+      localStorage.removeItem('requestsAndResponses');
+    }
+    this.disableButton();
     this.requestsAndResponses = [];
+    this.isFirstRequest = true;
   }
 
   disableButton() {
-    // let i = this.requestsAndResponses.length - 1;
     if(this.requestsAndResponses.length > 1) {
-      for(let i=0; i < this.requestsAndResponses.length; i++) {
+      for(let i=0; i < this.requestsAndResponses.length-1; i++) {
         this.requestsAndResponses[i].isRequestTraited = true;
       }
     }
-  }
-
-  private initializeRequestsAndResponses() {
-    this.requestsAndResponses = [
-      {
-        prompt: '',
-        response: {
-          typeAnswer: 'message',
-          methodToUse: 'message',
-          satisfied: false,
-          answerText: 'Hi, how can I help you?'
-        },
-      },
-      {
-        prompt: 'Send an email to John Doe',
-        response: {
-          typeAnswer: 'email',
-          methodToUse: 'send',
-          satisfied: false,
-          answerRelatedToGmail: {
-            to: 'sasbo@gmail.com',
-            subject: 'Meeting',
-            message: 'Hi John, let\'s meet tomorrow at 10am.'
-          }
-        },
-        isEmailBeingSent: false
-      },
-      {
-        prompt: 'I would like to schedule a meeting',
-        response: {
-          typeAnswer: 'calendar',
-          methodToUse: 'calendar',
-          satisfied: true,
-          answerRelatedToCalendar: {
-            description: 'Meeting with John Doe',
-            startTime: '2021-08-01T09:00:00',
-            endTime: '2021-08-01T10:00:00',
-            location: 'Office',
-            summary: 'Meeting'
-          }
-        },
-      },
-      {
-        prompt: 'Send an email to John Doe',
-        response: {
-          typeAnswer: 'email',
-          methodToUse: 'send',
-          satisfied: false,
-          answerRelatedToGmail: {
-            to: 'sasboabdo1205@gmail.com',
-            subject: 'Meeting',
-            message: 'Hi John, let\'s meet tomorrow at 10am.'
-          }
-        },
-        isEmailBeingSent: true
-      }
-    ];
   }
 
   private formatResponse(response: AnyResponse): AnyResponse | null {
@@ -289,7 +346,8 @@ export class MessagesComponent implements OnInit {
         methodToUse: response.methodToUse,
         satisfied: response.satisfied,
         wantToCancel: response.wantToCancel,
-        answerRelatedToCalendar: response.answerRelatedToCalendar
+        answerRelatedToCalendar: response.answerRelatedToCalendar,
+        listEventsCalendar: response.listEventsCalendar
       };
     } else {
       console.error('Unexpected response type:', response);
@@ -311,17 +369,25 @@ export class MessagesComponent implements OnInit {
     return null;
   }
 
+  isCalendarResponse(response: AnyResponse): response is CalendarResponse {
+    return response.typeAnswer === 'calendar';
+  }
+
   getCalendarResponse(response: AnyResponse): CalendarResponse | null {
-    if (response.typeAnswer === 'calendar') {
-      return response as CalendarResponse;
+    if (this.isCalendarResponse(response)) {
+      return response;
     }
     return null;
   }
 
-  private getLastResponse(): AnyResponse | undefined{
-      if (this.requestsAndResponses.length > 0) {
-        return this.requestsAndResponses[this.requestsAndResponses.length - 1].response;
-      }
-      return undefined
+  private getLastResponse(): AnyResponse | undefined {
+    if (this.requestsAndResponses.length > 0) {
+      return this.requestsAndResponses[this.requestsAndResponses.length - 1].response;
+    }
+    return undefined;
+  }
+
+  isNotList(response: AnyResponse): boolean {
+    return !['searchByKeyword', 'searchByDate', 'get'].includes(response.methodToUse);
   }
 }

@@ -20,44 +20,108 @@
         </p>
         <!-- assistant response -->
         <p class="assistant-response">
-          <strong>Assistant:</strong>
+          <strong>Assistant:</strong> 
           <ng-container *ngIf="getMessageResponse(rr.response)">
             <p>{{ getMessageResponse(rr.response)?.answerText }}</p>
           </ng-container>
+
           <ng-container *ngIf="getEmailResponse(rr.response)">
-            <!-- Check if the email has been sent (satisfied is true) -->
-            <ng-container *ngIf="rr.response.satisfied && rr.isEmailBeingSent; else emailDetails">
-              <p>Email is sent successfully!</p>
+            <ng-container *ngIf="rr.response.wantToCancel; else emailStatus">
+              <p>canceled!</p>
             </ng-container>
-            <!-- Template for displaying email details if not yet sent -->
-            <ng-template #emailDetails>
-              <p *ngIf="!rr.isRequestTraited"><strong>Verify mail to send:</strong></p>
-              <p *ngIf="rr.isEmailBeingSent">(This mail is sent ...)</p>
-              <p><strong>To:</strong> {{ getEmailResponse(rr.response)?.answerRelatedToGmail!.to }}</p>
-              <p><strong>Subject:</strong> {{ getEmailResponse(rr.response)?.answerRelatedToGmail!.subject }}</p>
-              <p><strong>Message:</strong> {{ getEmailResponse(rr.response)?.answerRelatedToGmail!.message }}</p>
-              <button mat-raised-button color="primary" (click)="confirmEmail(rr.response, i)" *ngIf="!rr.isRequestTraited">
-                Confirm Sending
-              </button>
+            <ng-template #emailStatus>
+              <ng-container *ngIf="rr.response.satisfied && rr.isEmailBeingSent; else emailDetails">
+                <p class="successSend">Email is sent successfully!</p>
+              </ng-container>
+              <ng-template #emailDetails>
+                <p *ngIf="!rr.isRequestTraited"><strong>Verify mail to send:</strong></p>
+                <p *ngIf="rr.isEmailBeingSent">(This mail is sent ...)</p>
+                <p><strong>To:</strong> {{ getEmailResponse(rr.response)?.answerRelatedToGmail!.to }}</p>
+                <p><strong>Subject:</strong> {{ getEmailResponse(rr.response)?.answerRelatedToGmail!.subject }}</p>
+                <p><strong>Message:</strong> {{ getEmailResponse(rr.response)?.answerRelatedToGmail!.message }}</p>
+                <button mat-raised-button color="primary" (click)="confirmEmail(rr.response, i)" *ngIf="!rr.isRequestTraited">
+                  Confirm Sending
+                </button>
+              </ng-template>
             </ng-template>
           </ng-container>
+
           <ng-container *ngIf="getCalendarResponse(rr.response)">
-            <ng-container *ngIf="rr.response.satisfied && rr.isEmailBeingSent; else calendarDetails">
-              <p>Event is added!</p>
+            <!-- Check if the event has been canceled -->
+            <ng-container *ngIf="rr.response.wantToCancel; else calendarStatus">
+              <p>canceled!</p>
             </ng-container>
-            <ng-template #calendarDetails>
-              <p *ngIf="!rr.isRequestTraited"><strong>Verify Event:</strong></p>
-              <p *ngIf="rr.isEmailBeingSent && rr.response.satisfied">(Event Added ...)</p>
-              <p><strong>Summary:</strong> {{ getCalendarResponse(rr.response)?.answerRelatedToCalendar!.summary }}</p>
-              <p><strong>Location:</strong> {{ getCalendarResponse(rr.response)?.answerRelatedToCalendar!.location }}</p>
-              <p><strong>Description:</strong> {{ getCalendarResponse(rr.response)?.answerRelatedToCalendar!.description }}</p>
-              <p><strong>Start Time:</strong> {{ getCalendarResponse(rr.response)?.answerRelatedToCalendar!.startTime | date: 'dd MMM yyyy, HH:mm' }}</p>
-              <p><strong>End Time:</strong> {{ getCalendarResponse(rr.response)?.answerRelatedToCalendar!.endTime | date: 'dd MMM yyyy, HH:mm' }}</p>
-              <button mat-raised-button color="primary" (click)="addToCalendar(rr.response, i)"
-              *ngIf="!rr.isRequestTraited"
-              >Add to Calendar
-              </button>
+            <!-- Template for displaying calendar status and details -->
+            <ng-template #calendarStatus>
+              <!-- Check if the event has been added (satisfied is true) -->
+              <ng-container *ngIf="rr.response.satisfied && rr.isEmailBeingSent; else calendarDetails">
+                <p class="successSend">Event is added!</p>
+              </ng-container>
+              <!-- Template for displaying calendar details if not yet added and not searching by date or keyword -->
+              <ng-template #calendarDetails>
+                <ng-container *ngIf="isNotList(rr.response)">
+                  <p *ngIf="!rr.isRequestTraited" class="verifyOperation"><strong>Verify Event:</strong></p>
+                  <p *ngIf="rr.isEmailBeingSent && rr.response.satisfied">(Event Added ...)</p>
+                  <p *ngIf="getCalendarResponse(rr.response)?.answerRelatedToCalendar!.summary">
+                    <strong>Summary:</strong> {{ getCalendarResponse(rr.response)?.answerRelatedToCalendar!.summary }}
+                  </p>
+                  <p *ngIf="getCalendarResponse(rr.response)?.answerRelatedToCalendar!.location">
+                    <strong>Location:</strong> {{ getCalendarResponse(rr.response)?.answerRelatedToCalendar!.location }}
+                  </p>
+                  <p *ngIf="getCalendarResponse(rr.response)?.answerRelatedToCalendar!.description">
+                    <strong>Description:</strong> {{ getCalendarResponse(rr.response)?.answerRelatedToCalendar!.description }}
+                  </p>
+                  <p *ngIf="getCalendarResponse(rr.response)?.answerRelatedToCalendar!.startTime">
+                    <strong>Start Time:</strong> {{ getCalendarResponse(rr.response)?.answerRelatedToCalendar!.startTime | date: 'dd MMM yyyy, HH:mm' }}
+                  </p>
+                  <p *ngIf="getCalendarResponse(rr.response)?.answerRelatedToCalendar!.endTime">
+                    <strong>End Time:</strong> {{ getCalendarResponse(rr.response)?.answerRelatedToCalendar!.endTime | date: 'dd MMM yyyy, HH:mm' }}
+                  </p>
+                  <button mat-raised-button color="primary" (click)="addToCalendar(rr.response, i)" *ngIf="!rr.isRequestTraited">
+                    Add to Calendar
+                  </button>
+                </ng-container>
+              </ng-template>
             </ng-template>
+
+            <!-- Check for methodToUse being 'searchByDate', 'searchByKeyword', or 'get' and display list of events -->
+            <ng-container *ngIf="isCalendarResponse(rr.response) && !isNotList(rr.response)">
+              <ng-container *ngIf="rr.dataSource?.data!.length > 0; else noEvents">
+                <table mat-table [dataSource]="rr.dataSource!" matSort>
+                  <ng-container matColumnDef="summary">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Summary</th>
+                    <td mat-cell *matCellDef="let event">{{ event.summary ? event.summary : 'Not specified' }}</td>
+                  </ng-container>
+              
+                  <ng-container matColumnDef="location">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Location</th>
+                    <td mat-cell *matCellDef="let event">{{ event.location ? event.location : '---------' }}</td>
+                  </ng-container>
+              
+                  <ng-container matColumnDef="description">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Description</th>
+                    <td mat-cell *matCellDef="let event">{{ event.description ? event.description : '---------' }}</td>
+                  </ng-container>
+              
+                  <ng-container matColumnDef="startTime">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Start Time</th>
+                    <td mat-cell *matCellDef="let event">{{ event.startTime | date: 'dd MMM yyyy, HH:mm' }}</td>
+                  </ng-container>
+              
+                  <ng-container matColumnDef="endTime">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>End Time</th>
+                    <td mat-cell *matCellDef="let event">{{ event.endTime | date: 'dd MMM yyyy, HH:mm' }}</td>
+                  </ng-container>
+              
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+                <mat-paginator [pageSizeOptions]="[3, 10, 20]" showFirstLastButtons></mat-paginator>
+              </ng-container>
+              <ng-template #noEvents>
+                <p>No events found</p>
+              </ng-template>
+            </ng-container>
           </ng-container>
         </p>
       </div>

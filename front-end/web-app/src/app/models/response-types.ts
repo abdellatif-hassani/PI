@@ -36,6 +36,7 @@ export interface CalendarDetails {
 // Response type for calendar interactions
 export interface CalendarResponse extends BaseResponse {
   answerRelatedToCalendar: CalendarDetails;
+  listEventsCalendar?: CalendarDetails[]; 
 }
 
 // Union type for any possible response

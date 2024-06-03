@@ -3,13 +3,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AnyResponse, RePromptRequest, PromptResponse } from '../models/response-types';
+import { environment } from '../../environments/environment'; // Import the environment
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
-  
-  private apiUrl = 'http://34.16.198.10:9090/prompt_service'; 
+
+  private apiUrl = environment.apiUrl; 
 
   constructor(private http: HttpClient) {}
 
@@ -48,14 +49,11 @@ export class ApiService {
     );
   }
 
-
-
   sendEmail(reprompt: RePromptRequest, token: any): Observable<any> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`
     });
-    reprompt.promptResponse.satisfied = true;
     console.log('reprompt:', reprompt);
     return this.http.post<any>(`${this.apiUrl}/reprompt`, reprompt, { headers }).pipe(
       catchError(error => {
@@ -63,8 +61,5 @@ export class ApiService {
         throw error;
       })
     );
-    
   }
-
-
 }

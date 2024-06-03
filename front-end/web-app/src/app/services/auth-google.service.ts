@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthConfig, OAuthService, OAuthEvent } from 'angular-oauth2-oidc';
+import { environment } from '../../environments/environment'; 
+import { AuthConfig, OAuthService } from 'angular-oauth2-oidc';
 import { interval, Observable, Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, catchError, filter } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -12,25 +13,19 @@ export class AuthGoogleService {
   private refreshSubscription!: Subscription;
 
   constructor(private oAuthService: OAuthService, private router: Router) {
-    
+    this.initConfiguration();
   }
 
   initConfiguration() {
-    const authConfig: AuthConfig = {
-      issuer: 'https://accounts.google.com',
-      strictDiscoveryDocumentValidation: false,
-      redirectUri: window.location.origin + '/test',
-      clientId: '620536565122-91ob5s78lu1t6pjcl2tbb0v0rdban5cj.apps.googleusercontent.com',
-      scope: 'openid profile email https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/gmail.modify ',
-    };
-    
+    const authConfig: AuthConfig = environment.authConfig;
+
     this.oAuthService.configure(authConfig);
     this.oAuthService.setupAutomaticSilentRefresh();
     this.oAuthService.loadDiscoveryDocumentAndTryLogin().then(() => {
-      console.log('************Discovery Document loaded:', this.oAuthService.discoveryDocumentLoaded$)
+      console.log('Discovery Document loaded:', this.oAuthService.discoveryDocumentLoaded$);
       if (this.oAuthService.hasValidAccessToken()) {
         this.storeToken(this.oAuthService.getAccessToken());
-        this.oAuthService.setupAutomaticSilentRefresh();
+        this.startTokenRefreshTimer();
       }
       console.log('Logged in:', this.oAuthService.hasValidAccessToken());
       console.log('Access Token:', this.oAuthService.getAccessToken());
@@ -43,28 +38,27 @@ export class AuthGoogleService {
 
   login() {
     this.oAuthService.initImplicitFlow();
-    this.initConfiguration();
-    this.startTokenRefreshTimer();
   }
 
   logout() {
     this.oAuthService.revokeTokenAndLogout();
     this.oAuthService.logOut();
-    this.clearToken(); 
+    this.clearToken();
     this.clearMessages();
-    this.router.navigate(['/login']); 
+    this.router.navigate(['/login']);
   }
 
   private storeToken(token: string) {
-    localStorage.setItem('access_token', token); // Store token in localStorage
+    localStorage.setItem('access_token', token);
   }
 
   private clearToken() {
-    localStorage.removeItem('access_token'); // Remove token from localStorage
+    localStorage.removeItem('access_token');
+    // localStorage.removeItem('token');
   }
 
   getToken(): string | null {
-    return localStorage.getItem('access_token'); // Retrieve token from localStorage
+    return localStorage.getItem('access_token');
   }
 
   getProfile() {
@@ -76,29 +70,30 @@ export class AuthGoogleService {
   }
 
   private startTokenRefreshTimer() {
-    this.refreshInterval$ = interval(60000); // Refresh token every 60 seconds (adjust as needed)
     this.refreshSubscription = this.refreshInterval$.pipe(
-      switchMap(() => this.refreshTokenIfNeeded())
+      filter(() => this.isAuthenticated() && this.oAuthService.getAccessTokenExpiration() < Date.now() + 60000),
+      switchMap(() => this.refreshTokenIfNeeded().pipe(
+        catchError(error => {
+          console.error('Error during token refresh:', error);
+          return [];
+        })
+      ))
     ).subscribe();
   }
 
   private refreshTokenIfNeeded(): Observable<any> {
-    if (this.isAuthenticated() && this.oAuthService.getAccessTokenExpiration() < Date.now() + 60000) {
-      return new Observable((observer) => {
-        this.oAuthService.refreshToken().then(() => {
-          const newAccessToken = this.oAuthService.getAccessToken();
-          this.storeToken(newAccessToken);
-          console.log('Access Token refreshed:', newAccessToken);
-          observer.next(); // Emit a value to indicate completion
-          observer.complete(); // Complete the observable
-        }).catch((error) => {
-          console.error('Error refreshing access token:', error);
-          observer.error(error); // Emit an error if refreshing fails
-          observer.complete(); // Complete the observable
-        });
+    return new Observable(observer => {
+      this.oAuthService.refreshToken().then(() => {
+        const newAccessToken = this.oAuthService.getAccessToken();
+        this.storeToken(newAccessToken);
+        console.log('Access Token refreshed:', newAccessToken);
+        observer.next();
+        observer.complete();
+      }).catch((error) => {
+        console.error('Error refreshing access token:', error);
+        observer.error(error);
+        observer.complete();
       });
-    } else {
-      return new Observable(); // Return an empty observable if refresh is not needed
-    }
+    });
   }
 }

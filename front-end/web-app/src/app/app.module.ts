@@ -6,8 +6,9 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './components/login/login.component';
 import { OAuthModule } from 'angular-oauth2-oidc';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { ReactiveFormsModule } from '@angular/forms';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { MatTableModule} from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
@@ -22,6 +23,8 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { MessagesComponent } from './components/messages/messages.component';
 import { PolicyComponent } from './components/policy/policy.component';
 import { TestLoginComponent } from './components/test-login/test-login.component';
+import { MatSortModule } from '@angular/material/sort';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -41,7 +44,8 @@ import { TestLoginComponent } from './components/test-login/test-login.component
     OAuthModule.forRoot(),
     FormsModule, ReactiveFormsModule, MatCardModule,
     MatSidenavModule,MatListModule,MatFormFieldModule,MatInputModule,
-    MatButtonModule, MatIconModule, MatToolbarModule
+    MatButtonModule, MatIconModule, MatToolbarModule, MatTableModule, 
+    MatPaginatorModule, MatSortModule, BrowserAnimationsModule
   ],
   providers: [
     provideAnimationsAsync(),
