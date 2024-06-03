@@ -63,7 +63,7 @@ class PromptResponse extends Jsonable {
   }
   @override
   String toString() {
-    String messageText = answerText ?? "";
+    String? messageText ;
     if(typeAnswer == PromptResponseType.calendar) {
       if(methodToUse==MethodToUseType.get||methodToUse==MethodToUseType.searchByDate||methodToUse==MethodToUseType.searchByKeyword)
         {
@@ -72,17 +72,19 @@ class PromptResponse extends Jsonable {
           } else {
           messageText = "Here are your events: \n";
           for (var event in listEventsCalendar) {
-            messageText += event.toString() + "\n---------------\n";
+            messageText = "${messageText}  ${event.toString()}  \n---------------\n";
           }
         }
     }else if(methodToUse==MethodToUseType.create){
-      messageText  ="$messageText \n ${answerRelatedToCalendar?.toString()}";
+      messageText  ="${answerRelatedToCalendar?.toString()}";
     }
     } else if (typeAnswer == PromptResponseType.email) {
       if (methodToUse == MethodToUseType.send) {
-        messageText = "$messageText \n ${answerRelatedToGmail?.toString()}";
+        messageText = "${answerRelatedToGmail?.toString()}";
       }
+    }else{
+      messageText = answerText??"no answer";
     }
-    return messageText;
+    return messageText??"no answer";
   }
 }

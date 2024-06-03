@@ -20,8 +20,8 @@ class CalendarInfo {
       summary: json['summary']?? "no summary",
       location: json['location']?? "no location",
       description: json['description']??"no description",
-      startTime: json['startTime'] ?? "no start time",
-      endTime: json['endTime']??"no end time",
+      startTime: json['startTime'] ,
+      endTime: json['endTime'],
     );
   }
 
@@ -40,7 +40,7 @@ class CalendarInfo {
     return '${String.fromCharCode(0x1F4C5)}: '
         '${summary??'no summary'}  \n ${String.fromCharCode(0x1f4cd)}:'
         ' ${location??'no location'} \n ${String.fromCharCode(0x1f4dd)}: ${description??'no description'} \n'
-        ' ${String.fromCharCode(0x1f55c)}: ${DateFormat("HH:mm d MMM yyyy").format(DateTime.parse(startTime??""))} \n'
-        ' ${String.fromCharCode(0x1f55b)}: ${DateFormat("HH:mm d MMM yyyy").format(DateTime.parse(endTime??""))}';
+        ' ${String.fromCharCode(0x1f55c)}: ${startTime!=null?DateFormat("HH:mm d MMM yyyy").format(DateTime.parse(startTime??"")):"no start Time"} \n'
+        ' ${String.fromCharCode(0x1f55b)}: ${endTime!=null ?DateFormat("HH:mm d MMM yyyy").format(DateTime.parse(endTime??"")):"no end Time"}';
   }
 }

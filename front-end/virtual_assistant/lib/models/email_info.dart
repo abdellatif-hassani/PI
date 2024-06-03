@@ -31,6 +31,6 @@ class EmailInfo {
   // }
   @override
   String toString() {
-    return 'to: $to \n Subject $subject \n Body : $message';
+    return 'to: $to \n Subject : $subject \n Body : $message';
   }
 }

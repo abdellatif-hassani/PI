@@ -11,7 +11,7 @@ import 'package:virtual_assistant/pages/starter_page.dart';
 import 'package:virtual_assistant/services/login_service.dart';
 void main() async{
   await dotenv.load();
-runApp(ChatterApp());
+  runApp(ChatterApp());
 }
 
 class ChatterApp extends StatelessWidget {
@@ -39,7 +39,7 @@ class ChatterApp extends StatelessWidget {
             ),
           ),
         ),
-         home: StarterPage(),
+        home: StarterPage(),
       ),
     );
   }

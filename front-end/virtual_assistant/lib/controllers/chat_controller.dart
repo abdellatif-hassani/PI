@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive/hive.dart';
 import 'package:mime_type/mime_type.dart';
+import 'package:virtual_assistant/controllers/send_message_handler.dart';
 import 'package:virtual_assistant/models/attachement.dart';
 import 'package:virtual_assistant/models/data.dart';
 import 'package:virtual_assistant/models/method_to_use_type.dart';
@@ -32,9 +33,11 @@ class ChatController with ChangeNotifier {
   Status _status = Status.NORMAL;
   Status get status => _status;
   late HttpChatService chatService;
-
+  IHandlerChooser? handlerChooser;
+  SendMessageHandler? sendMessageHandler;
   ChatController() {
     chatService = HttpChatService(token: secretToken, url: url);
+    handlerChooser = HandlerChooser();
   }
 
     Data<User?> user = Data<User?>(status: Status.NORMAL);
@@ -59,48 +62,27 @@ class ChatController with ChangeNotifier {
   Future sendMessage(String messageText) async {
     _status = Status.LOADING;
     notifyListeners()  ;
-    Message message = Message(message: messageText,attachments: attachments);
-    storageService.saveMessage(message);
-    try {
-      HttpResponse<PromptResponse>? promptResponse;
-      if (lastPrompt == null) {
-        promptResponse =
-        await chatService.sendMessage(message, user.data!.tokenId);
-      } else {
-        promptResponse = await chatService.sendRePromptRequest(
-            PromptRequest(promptResponse: lastPrompt!, userText: messageText),
-            user.data!.tokenId);
-      }
-      lastPrompt = promptResponse.data;
-      if (promptResponse.statusCode == 200) {
-        if (promptResponse.data!.typeAnswer == PromptResponseType.message ||
-            promptResponse.data!.methodToUse != MethodToUseType.create || promptResponse.data!.methodToUse != MethodToUseType.send) {
-          lastPrompt = null;
-          storageService.saveMessage(Message(
-              message: promptResponse.data.toString(), isSender: false));
-        } else if (promptResponse.data!.satisfied != true) {
-          storageService.saveMessage(Message(
-              message: promptResponse.data.toString(), isSender: false));
-        } else if (promptResponse.data!.satisfied == true) {
-          lastPrompt = null;
-          storageService.saveMessage(
-              Message(message: "your request is Sent", isSender: false)
-          );
-        }
-      } else {
-        lastPrompt = null;
-        storageService.saveMessage(
-            Message(message: promptResponse.error, isSender: false)
-        );
-      }
-    }
-    catch (e) {
+    try{
+      sendMessageHandler = handlerChooser?.getHandler(lastPrompt);
+      sendMessageHandler?.setStorageService(storageService);
+      sendMessageHandler?.setChatService(chatService);
+      sendMessageHandler?.setToken(user.data!.tokenId);
+      sendMessageHandler?.setLastPrompt(lastPrompt);
+      lastPrompt = await sendMessageHandler?.sendMessage(messageText);
+    } on SocketException {
       lastPrompt = null;
-      if(e is SocketException)
-        storageService.saveMessage(Message(message: "No internet connection", isSender: false));
-        else
-        storageService.saveMessage(Message(message: e.toString(), isSender: false));
+      storageService.saveMessage(Message(message: "No internet connection", isSender: false));
+    } catch (e) {
+      lastPrompt = null;
+      storageService.saveMessage(Message(message: e.toString(), isSender: false));
     }
+    // catch (e) {
+    //   lastPrompt = null;
+    //   if(e is SocketException)
+    //     storageService.saveMessage(Message(message: "No internet connection", isSender: false));
+    //     else
+    //     storageService.saveMessage(Message(message: e.toString(), isSender: false));
+    // }
     _status = Status.SUCCESS;
     notifyListeners();
   }
